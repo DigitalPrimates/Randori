@@ -31,24 +31,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SharpKit.Html, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2575297a09c47a96, processorArchitecture=MSIL" />
     <Reference Include="SharpKit.JavaScript, Version=1.5.0.0, Culture=neutral, PublicKeyToken=2575297a09c47a96, processorArchitecture=MSIL" />
+    <Reference Include="SharpKit.jQuery, Version=1.6.4.0, Culture=neutral, PublicKeyToken=2575297a09c47a96, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="attributes\Inject.cs" />
+    <Compile Include="attributes\View.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="styles\StyleBehaviorManager.cs" />
+    <Compile Include="styles\StyleBehaviorMap.cs" />
+    <Compile Include="styles\StyleBehaviorMapEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <SkcPlugin Include="net.digitalPrimates.GuiceMetadataPlugin, RandoriSharpKitExtensions">
       <InProject>false</InProject>
     </SkcPlugin>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RandoriGuiceJS\RandoriGuiceJS.csproj">
-      <Project>{37704182-0ED6-44E6-B351-69A9BAD717EE}</Project>
-      <Name>RandoriGuiceJS</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
