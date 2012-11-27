@@ -26,10 +26,9 @@ namespace randori.styles {
     public delegate void DataRetrievedDelegate( object o );
 
     [JsType(JsMode.Prototype,OmitCasts = true)]
-    public class StyleBehaviorManager : jQueryContext {
+    public class StyleBehaviorManager  {
 
-        [Inject]
-        public StyleBehaviorMap map;
+        private StyleBehaviorMap map;
 
         JsArray<JsString> findURLs( jQuery links ) {
             HtmlLinkElement link;
@@ -77,7 +76,7 @@ namespace randori.styles {
                 sheetRequest.send("");
 
                 if (sheetRequest.status == 404) {
-                    alert("Cannot Find StyleSheet " + url);
+                    throw new JsError("Cannot Find StyleSheet " + url);
                 }
 
                 int lastSlash = url.lastIndexOf("/");
@@ -133,7 +132,7 @@ namespace randori.styles {
                             dpVendorItemStr = dpVendorItemsResult[j];
                             dpVendorItemInfoResult = dpVendorItemStr.match(dpVendorItemsDetail);
                             map.addBehaviorEntry(CSSClassSelectorName, dpVendorItemInfoResult[1], dpVendorItemInfoResult[2]);
-                            console.log(CSSClassSelectorName + " specifies a " + dpVendorItemInfoResult[1] + " implemented by class " + dpVendorItemInfoResult[2]);
+                            HtmlContext.console.log(CSSClassSelectorName + " specifies a " + dpVendorItemInfoResult[1] + " implemented by class " + dpVendorItemInfoResult[2]);
                         }
                     }
                 }

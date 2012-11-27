@@ -1,5 +1,5 @@
-/***
- * Copyright 2012 LTN Consulting, Inc. /dba Digital Primates�
+﻿/***
+ * Copyright 2012 LTN Consulting, Inc. /dba Digital Primates®
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,9 @@
 
 using SharpKit.JavaScript;
 
-namespace randori.attributes  {
+namespace randori.content {
 
-    [JsType(JsMode.Prototype,Export = false)]
-    [System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field)]
-    public class View : System.Attribute {
-        public bool required;
-        public View( bool required=true ) {
-            this.required = required;
-        }
+    [JsType(JsMode.Prototype)]
+    class ContentParser {
     }
 }
