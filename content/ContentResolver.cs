@@ -23,7 +23,6 @@ using randori.styles;
 
 namespace randori.content {
 
-    [JsType(JsMode.Prototype)]
     public class ContentResolver {
 
         private StyleBehaviorMap map;

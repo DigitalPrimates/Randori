@@ -23,7 +23,7 @@ using guice.binding;
 using randori.styles;
 
 namespace randori.startup {
-    [JsType(JsMode.Prototype)]
+
     public class RandoriModule : GuiceModule {
         override public void configure(Binder binder) {
             //make the StyleBehaviorMap a Singleton

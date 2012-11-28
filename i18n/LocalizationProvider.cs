@@ -21,7 +21,7 @@ using SharpKit.JavaScript;
 using randori.timer;
 
 namespace randori.i18n {
-    [JsType(JsMode.Prototype)]
+
     public class LocalizationProvider {
 
         AbstractTranslator translator;

@@ -20,13 +20,11 @@
 using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
-using guice.reflection;
 using randori.styles;
 using guice;
 
 namespace randori.behaviors {
 
-    [JsType(JsMode.Prototype)]
     public class BehaviorResolver {
 
         private StyleBehaviorMap map;

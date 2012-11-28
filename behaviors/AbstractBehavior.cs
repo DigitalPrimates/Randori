@@ -21,7 +21,6 @@ using SharpKit.jQuery;
 
 namespace randori.behaviors {
 
-    [JsType(JsMode.Prototype)]
     public abstract class AbstractBehavior {
 
         protected jQuery rootElement;

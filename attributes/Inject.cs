@@ -21,17 +21,17 @@ using SharpKit.JavaScript;
 
 namespace randori.attributes {
 
-    [JsType(JsMode.Prototype,Export = false)]
+    [JsType(Export = false)]
     [System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Method | System.AttributeTargets.Field)]
     public class Inject : System.Attribute {
 
         string annotation;
 
-        public Inject() {
-        }
-
         public Inject( string annotation ) {
             this.annotation = annotation;
+        }
+
+        public Inject() {
         }
     }
 }

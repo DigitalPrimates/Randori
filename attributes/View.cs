@@ -21,10 +21,11 @@ using SharpKit.JavaScript;
 
 namespace randori.attributes  {
 
-    [JsType(JsMode.Prototype,Export = false)]
+    [JsType(Export = false)]
     [System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field)]
     public class View : System.Attribute {
         public bool required;
+
         public View( bool required=true ) {
             this.required = required;
         }

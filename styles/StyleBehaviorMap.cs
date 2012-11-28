@@ -22,7 +22,6 @@ using SharpKit.jQuery;
 
 namespace randori.styles {
 
-    [JsType(JsMode.Prototype)]
     public class StyleBehaviorMap  {
 
         public JsObject<StyleBehaviorMapEntry> hashMap;

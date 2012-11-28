@@ -21,7 +21,6 @@ using SharpKit.JavaScript;
 
 namespace randori.content {
 
-    [JsType(JsMode.Prototype)]
     class ContentLoader {
         public JsString synchronousLoad() {
             return "";

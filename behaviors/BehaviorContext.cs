@@ -23,7 +23,6 @@ using SharpKit.jQuery;
 using guice.reflection;
 
 namespace randori.behaviors {
-    [JsType(JsMode.Prototype)]
     public class BehaviorContext {
         public AbstractBehavior resolvedBehavior;
         readonly private JsObject<object> injectionMap;
