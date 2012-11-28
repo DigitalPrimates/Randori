@@ -23,9 +23,9 @@ using SharpKit.jQuery;
 using randori.attributes;
 
 namespace randori.styles {
+    [JsType(Export = false)]
     public delegate void DataRetrievedDelegate( object o );
 
-    [JsType(JsMode.Prototype,OmitCasts = true)]
     public class StyleBehaviorManager  {
 
         private StyleBehaviorMap map;

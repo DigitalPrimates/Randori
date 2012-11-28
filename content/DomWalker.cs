@@ -21,15 +21,16 @@ using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using randori.behaviors;
+using randori.i18n;
 
 namespace randori.content {
 
-    [JsType(JsMode.Prototype)]
     public class DomWalker {
 
         readonly JsRegExp internationalKey = new JsRegExp(@"\[(labels|messages|reference)\.\w+\]", "g");
         readonly BehaviorResolver behaviorResolver;
         readonly ContentResolver contentResolver;
+        readonly LocalizationProvider localizationProvider;
 
         private void investigateTextNode(Node node) {
             var textContent = node.nodeValue;
@@ -38,12 +39,14 @@ namespace randori.content {
             if (i18nResult != null) {
                 //TODO put localization back in
                 HtmlContext.console.log(textContent + " contains " + i18nResult);
-                //localizationProvider.translateNode(node.As<HtmlTextNode>(), i18nResult);
+                localizationProvider.translateNode(node, i18nResult);
             }
         }
 
         private void investigateElement(HtmlElement element, BehaviorContext parentContext) {
             var resolvedNewBehavior = false;
+
+            //build a context for this behavior IF it turns out that this particular element defines one
             var behaviorContext = behaviorResolver.resolveBehavior(element);
             var id = element.getAttribute("id");
 
@@ -57,7 +60,7 @@ namespace randori.content {
             if (behaviorContext != null) {
                 //we have a new behavior, this effectively causes us to use a new context for the nodes below it
                 //Make sure we add ourselves to our parent though
-                if (id != null) {
+                if (id != null && parentContext != null) {
                     parentContext.addBehavior(id, behaviorContext.resolvedBehavior);
                 }
 
@@ -66,12 +69,12 @@ namespace randori.content {
                 //Keep the same context and pass it along as we didn't create a new behavior
                 behaviorContext = parentContext;
 
-                if (id != null) {
+                if (id != null && parentContext != null) {
                     parentContext.addNode(id, jQueryContext.J(element));
                 }
             }
 
-            walkDomFragment(element, behaviorContext);
+            walkChildren(element, behaviorContext);
 
             //Now that we have figured out all of the items under this dom element, setup the behavior
             if (resolvedNewBehavior) {
@@ -82,24 +85,32 @@ namespace randori.content {
             behaviorContext = parentContext;
         }
 
-        public void walkDomFragment(Node node, BehaviorContext parentContext) {
-            node = node.firstChild;
+        private void investigateNode( Node node, BehaviorContext parentContext=null ) {
+            if (node.nodeType == Node.ELEMENT_NODE) {
+                investigateElement(node.As<HtmlElement>(), parentContext);
+            } else if (node.nodeType == Node.TEXT_NODE) {
+                //This is a text node, check to see if it needs internationalization
+                investigateTextNode(node);
+            }
+        }
+
+        private void walkChildren(Node parentNode, BehaviorContext parentContext = null) {
+            var node = parentNode.firstChild;
 
             while (node != null) {
-                if (node.nodeType == Node.ELEMENT_NODE) {
-                    investigateElement(node.As<HtmlElement>(), parentContext);
-                } else if (node.nodeType == Node.TEXT_NODE) {
-                    //This is a text node, check to see if it needs internationalization
-                    investigateTextNode(node);
-                }
-
+                investigateNode(node, parentContext);
                 node = node.nextSibling;
             }
         }
 
-        public DomWalker( BehaviorResolver behaviorResolver, ContentResolver contentResolver ) {
+        public void walkDomFragment(Node node, BehaviorContext parentContext = null) {
+            investigateNode(node, parentContext);
+        }
+
+        public DomWalker( BehaviorResolver behaviorResolver, ContentResolver contentResolver, LocalizationProvider localizationProvider ) {
             this.behaviorResolver = behaviorResolver;
             this.contentResolver = contentResolver;
+            this.localizationProvider = localizationProvider;
         }
     }
 }
