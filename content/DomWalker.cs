@@ -22,6 +22,7 @@ using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using randori.behaviors;
 using randori.i18n;
+using randori.styles;
 
 namespace randori.content {
 
@@ -30,6 +31,7 @@ namespace randori.content {
         readonly JsRegExp internationalKey = new JsRegExp(@"\[(labels|messages|reference)\.\w+\]", "g");
         readonly BehaviorResolver behaviorResolver;
         readonly ContentResolver contentResolver;
+        readonly StyleBehaviorManager styleBehaviorManager;
         readonly LocalizationProvider localizationProvider;
 
         private void investigateTextNode(Node node) {
@@ -37,14 +39,23 @@ namespace randori.content {
             var i18nResult = textContent.match(internationalKey);
 
             if (i18nResult != null) {
-                //TODO put localization back in
                 HtmlContext.console.log(textContent + " contains " + i18nResult);
                 localizationProvider.translateNode(node, i18nResult);
             }
         }
 
-        private void investigateElement(HtmlElement element, BehaviorContext parentContext) {
+        private void investigateLinkElement(HtmlLinkElement element) {
+            if (styleBehaviorManager.parsingNeeded( element )) {
+                styleBehaviorManager.parseAndReleaseLinkElement(element);
+            }
+        }
+
+        private void investigateDomElement(HtmlElement element, BehaviorContext parentContext) {
             var resolvedNewBehavior = false;
+
+            var nodeName = element.nodeName;
+
+            HtmlContext.console.log( element.nodeName );
 
             //build a context for this behavior IF it turns out that this particular element defines one
             var behaviorContext = behaviorResolver.resolveBehavior(element);
@@ -86,11 +97,25 @@ namespace randori.content {
         }
 
         private void investigateNode( Node node, BehaviorContext parentContext=null ) {
+
             if (node.nodeType == Node.ELEMENT_NODE) {
-                investigateElement(node.As<HtmlElement>(), parentContext);
+
+                //Just an optimization, need to create constants for all of these things
+                if (node.nodeName == "SCRIPT" || node.nodeName == "META") {
+                    return;
+                }
+
+                if ( node.nodeName == "LINK" ) {
+                    investigateLinkElement(node.As<HtmlLinkElement>());
+                } else {
+                    investigateDomElement(node.As<HtmlElement>(), parentContext);
+                }
+
             } else if (node.nodeType == Node.TEXT_NODE) {
                 //This is a text node, check to see if it needs internationalization
                 investigateTextNode(node);
+            } else if (node.nodeType == Node.DOCUMENT_NODE) {
+                walkChildren( node, parentContext );
             }
         }
 
@@ -107,9 +132,10 @@ namespace randori.content {
             investigateNode(node, parentContext);
         }
 
-        public DomWalker( BehaviorResolver behaviorResolver, ContentResolver contentResolver, LocalizationProvider localizationProvider ) {
+        public DomWalker(BehaviorResolver behaviorResolver, ContentResolver contentResolver, StyleBehaviorManager styleBehaviorManager, LocalizationProvider localizationProvider) {
             this.behaviorResolver = behaviorResolver;
             this.contentResolver = contentResolver;
+            this.styleBehaviorManager = styleBehaviorManager;
             this.localizationProvider = localizationProvider;
         }
     }

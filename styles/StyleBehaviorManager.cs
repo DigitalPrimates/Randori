@@ -30,23 +30,17 @@ namespace randori.styles {
 
         private StyleBehaviorMap map;
 
-        JsArray<JsString> findURLs( jQuery links ) {
-            HtmlLinkElement link;
-            var urls = new JsArray<JsString>(); ;
+        public bool parsingNeeded(HtmlLinkElement link) {
+            return ( link.rel == "stylesheet/randori" );
+        }
 
-            if (links != null) {
-                for (var i = 0; i < links.length; i++) {
-                    link = links[i].As<HtmlLinkElement>();
-                    if (link.rel == "stylesheet/randori") {
-                        //reset it and let the browser handle it, we have the url we need
-                        //we will grab it next
-                        link.rel = "stylesheet";
-                        urls.push(link.href);
-                    }
-                }
-            }
+        JsString resetLinkAndReturnURL(HtmlLinkElement link) {
 
-            return urls;
+            //reset it and let the browser handle it now, we have the url we need
+            //we will grab it next
+            link.rel = "stylesheet";
+
+            return link.href;
         }
 
         /*
@@ -64,26 +58,22 @@ namespace randori.styles {
             return sheet;
         }*/
 
-        void loadSheets(JsArray<JsString> urls) {
+        void resolveSheet(JsString url) {
             var sheetRequest = new XMLHttpRequest();
             JsString behaviorSheet = "";
-            JsString url;
             JsString prefix;
 
-            for (int i = 0; i < urls.length; i++) {
-                url = urls[i];
-                sheetRequest.open("GET", url, false);
-                sheetRequest.send("");
+            sheetRequest.open("GET", url, false);
+            sheetRequest.send("");
 
-                if (sheetRequest.status == 404) {
-                    throw new JsError("Cannot Find StyleSheet " + url);
-                }
-
-                int lastSlash = url.lastIndexOf("/");
-                prefix = url.substring(0, lastSlash);
-
-                parseAndPersistBehaviors(sheetRequest.responseText);
+            if (sheetRequest.status == 404) {
+                throw new JsError("Cannot Find StyleSheet " + url);
             }
+
+            int lastSlash = url.lastIndexOf("/");
+            prefix = url.substring(0, lastSlash);
+
+            parseAndPersistBehaviors(sheetRequest.responseText);
         }
 
         void parseAndPersistBehaviors(JsString sheet) {
@@ -139,9 +129,8 @@ namespace randori.styles {
             }
         }
 
-        public void parseAndReleaseNodes(jQuery links) {
-            var urls = findURLs(links);
-            loadSheets(urls);
+        public void parseAndReleaseLinkElement(HtmlLinkElement element) {
+            resolveSheet(resetLinkAndReturnURL(element));
         }
 
         StyleBehaviorManager(StyleBehaviorMap map) {

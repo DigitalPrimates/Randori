@@ -31,10 +31,6 @@ namespace randori.startup {
             var guiceJs = new GuiceJs();
             var injector = guiceJs.createInjector(new RandoriModule());
 
-            //Load the style sheets and extract our needed information
-            //var styleManager = (StyleBehaviorManager)injector.getInstance(typeof(StyleBehaviorManager));
-            //styleManager.parseAndReleaseNodes(J("link"));
-
             var domWalker = (DomWalker)injector.getInstance(typeof(DomWalker));
             domWalker.walkDomFragment(rootNode);
         }
