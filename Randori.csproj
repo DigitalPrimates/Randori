@@ -41,21 +41,23 @@
     <Compile Include="attributes\Inject.cs" />
     <Compile Include="attributes\View.cs" />
     <Compile Include="behaviors\AbstractBehavior.cs" />
-    <Compile Include="behaviors\BehaviorContext.cs" />
+    <Compile Include="behaviors\AbstractMediator.cs" />
     <Compile Include="content\ContentResolver.cs" />
     <Compile Include="content\ContentLoader.cs" />
     <Compile Include="content\ContentParser.cs" />
-    <Compile Include="content\DomWalker.cs" />
+    <Compile Include="dom\DomExtensionFactory.cs" />
+    <Compile Include="dom\DomWalker.cs" />
+    <Compile Include="dom\ElementDescriptorFactory.cs" />
     <Compile Include="i18n\AbstractTranslator.cs" />
     <Compile Include="i18n\LocalizationProvider.cs" />
+    <Compile Include="i18n\NoOpTranslator.cs" />
     <Compile Include="i18n\PropertyFileTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="startup\RandoriApplication.cs" />
     <Compile Include="startup\RandoriModule.cs" />
-    <Compile Include="styles\StyleBehaviorManager.cs" />
+    <Compile Include="styles\StyleExtensionManager.cs" />
     <Compile Include="styles\StyleBehaviorMap.cs" />
-    <Compile Include="styles\StyleBehaviorMapEntry.cs" />
-    <Compile Include="behaviors\BehaviorResolver.cs" />
+    <Compile Include="styles\StyleExtensionMapEntry.cs" />
     <Compile Include="timer\Timer.cs" />
   </ItemGroup>
   <ItemGroup>

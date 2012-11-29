@@ -17,9 +17,9 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
-using SharpKit.JavaScript;
 using guice;
 using guice.binding;
+using randori.i18n;
 using randori.styles;
 
 namespace randori.startup {
@@ -27,7 +27,10 @@ namespace randori.startup {
     public class RandoriModule : GuiceModule {
         override public void configure(Binder binder) {
             //make the StyleBehaviorMap a Singleton
-            binder.bind(typeof(StyleBehaviorMap)).inScope(Scope.SINGLETON).to(typeof(StyleBehaviorMap));
+            binder.bind(typeof(StyleBehaviorMap)).inScope(Scope.Singleton).to(typeof(StyleBehaviorMap));
+
+            //Setup a NoOp translator as the default
+            binder.bind(typeof(AbstractTranslator)).to(typeof(NoOpTranslator));
         }
     }
 }

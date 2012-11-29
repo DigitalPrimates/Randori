@@ -18,35 +18,34 @@
  */
 
 using SharpKit.JavaScript;
-using SharpKit.jQuery;
 
 namespace randori.styles {
 
     public class StyleBehaviorMap  {
 
-        public JsObject<StyleBehaviorMapEntry> hashMap;
+        public JsObject<StyleExtensionMapEntry> hashMap;
 
         public void addBehaviorEntry(JsString cssClassName, JsString behaviorType, JsString className ) {
-            StyleBehaviorMapEntry attributes = hashMap[cssClassName];
+            StyleExtensionMapEntry attributes = hashMap[cssClassName];
 
             if (attributes == null) {
-                attributes = new StyleBehaviorMapEntry();
+                attributes = new StyleExtensionMapEntry();
                 hashMap[cssClassName] = attributes;
             }
 
-            attributes.addBehaviorType(behaviorType, className);
+            attributes.addExtensionType(behaviorType, className);
         }
 
         public bool hasBehaviorEntry(JsString className) {
             return (hashMap[className] != null);
         }
 
-        public StyleBehaviorMapEntry getBehaviorEntry(JsString cssClassName) {
+        public StyleExtensionMapEntry getBehaviorEntry(JsString cssClassName) {
             return hashMap[cssClassName];
         }
 
         public StyleBehaviorMap() {
-            hashMap = new JsObject<StyleBehaviorMapEntry>();
+            hashMap = new JsObject<StyleExtensionMapEntry>();
         }
     }
 }

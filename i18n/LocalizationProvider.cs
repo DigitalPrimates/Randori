@@ -22,25 +22,40 @@ using randori.timer;
 
 namespace randori.i18n {
 
+    /**Right now this class really does translation and not complete localization. It is a work in progress.
+     * Dates are the next target **/
     public class LocalizationProvider {
+
+        readonly JsRegExp internationalKey = new JsRegExp(@"\[(labels|messages|reference)\.\w+\]", "g");
 
         AbstractTranslator translator;
         JsObject<JsArray<Node>> pendingTranslations;
         Timer timer;
 
+        JsRegExpResult getElementLocalizationComponents( Node textNode ) {
+            var textContent = textNode.nodeValue;
+            var i18nResult = textContent.match(internationalKey);
+
+            return i18nResult;
+        }
+
         public JsArray<Translation> translateKeysSynchronously(JsString domain, JsArray<JsString> keys) {
             return translator.synchronousTranslate( domain, keys );
         }
 
-        public void translateNode(Node textNode, JsRegExpResult result) {
+        public void investigateTextNode(Node textNode) {
             //We have a list of matches within the text node which tell us what we need to get
             //further we have the original node, which we need to preserve as there may be only parts getting translated
             //even though this is bad form <div>[labels.monkey] is a type of [labels.animal]</div> we still need to support it
-            for ( int i=0; i<result.length;i++) {
-                requestTranslation( result[ i ], textNode );
-            }
+            var result = getElementLocalizationComponents(textNode);
 
-            scheduleTranslation();
+            if (result != null) {
+                for ( int i=0; i<result.length;i++) {
+                    requestTranslation( result[ i ], textNode );
+                }
+
+                scheduleTranslation();
+            }
         }
 
         private void requestTranslation(JsString expression, Node textNode) {

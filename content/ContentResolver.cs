@@ -34,7 +34,7 @@ namespace randori.content {
             element.removeAttribute("data-content");
 
             if (content == null) {
-                //content = map.getBehaviorClass("content");
+                //content = map.getExtensionClass("content");
             }
 
             //load the content

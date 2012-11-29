@@ -18,24 +18,19 @@
  */
 
 using SharpKit.Html;
-using guice;
-using randori.dom;
+using SharpKit.JavaScript;
 
-namespace randori.startup {
-    public class RandoriApplication {
-        readonly Node rootNode;
+namespace randori.i18n {
+    class NoOpTranslator : AbstractTranslator {
 
-        public void launch() {
-            //Create the injector that will be used in the application
-            var guiceJs = new GuiceJs();
-            var injector = guiceJs.createInjector(new RandoriModule());
-
-            var domWalker = (DomWalker)injector.getInstance(typeof(DomWalker));
-            domWalker.walkDomFragment(rootNode, (InjectionClassBuilder)injector.getInstance(typeof(InjectionClassBuilder)));
+        public override JsArray<Translation> synchronousTranslate(JsString domain, JsArray<JsString> keys) {
+            HtmlContext.console.log("Requested to translate: " + domain + " " + keys);
+            return new JsArray<Translation>();
         }
 
-        public RandoriApplication(Node rootNode) {
-            this.rootNode = rootNode;
+        public override void translate(JsString domain, JsArray<JsString> keys) {
+            HtmlContext.console.log("Requested to translate: " + domain + " " + keys );
         }
+
     }
 }

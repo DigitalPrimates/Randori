@@ -23,12 +23,49 @@ using SharpKit.jQuery;
 using randori.attributes;
 
 namespace randori.styles {
+
+    /* Not able to make this work as I want just yet. Feature request filed
+    [JsType(JsMode.Json)]
+    public class StyleExtensionType {
+        public static readonly string Module = "module";
+        public static readonly string Mediator = "mediator";
+        public static readonly string Behavior = "behavior";
+        public static readonly string Content = "content";
+        public static readonly string Formatter = "formatter";
+        public static readonly string Validator = "validator";
+    } */
+
     [JsType(Export = false)]
     public delegate void DataRetrievedDelegate( object o );
 
-    public class StyleBehaviorManager  {
+    public class StyleExtensionManager  {
 
-        private StyleBehaviorMap map;
+        readonly StyleBehaviorMap map;
+
+        //TODO consider moving this somewhere more appropriate
+        public StyleExtensionMapEntry getMergedEntryForElement(HtmlElement element) {
+            JsString cssClassList = element.getAttribute("class");
+            StyleExtensionMapEntry mergedEntry = null;
+
+            if (cssClassList != null) {
+                JsArray cssClassArray = cssClassList.split(" ");
+                for (int i = 0; i < cssClassArray.length; i++) {
+                    JsString cssClass = cssClassArray[i].As<JsString>();
+                    StyleExtensionMapEntry extensionMapEntry = map.getBehaviorEntry(cssClass);
+
+                    if (extensionMapEntry != null) {
+                        if (mergedEntry == null) {
+                            //Waiting as long as we can to instantiate
+                            mergedEntry = new StyleExtensionMapEntry();
+                        }
+
+                        extensionMapEntry.mergeTo(mergedEntry);
+                    }
+                }
+            }
+
+            return mergedEntry;
+        }
 
         public bool parsingNeeded(HtmlLinkElement link) {
             return ( link.rel == "stylesheet/randori" );
@@ -37,7 +74,7 @@ namespace randori.styles {
         JsString resetLinkAndReturnURL(HtmlLinkElement link) {
 
             //reset it and let the browser handle it now, we have the url we need
-            //we will grab it next
+            //we will grab it next. So long as we are caching files, it will be retrieved synchronoulsy from the cache
             link.rel = "stylesheet";
 
             return link.href;
@@ -133,7 +170,7 @@ namespace randori.styles {
             resolveSheet(resetLinkAndReturnURL(element));
         }
 
-        StyleBehaviorManager(StyleBehaviorMap map) {
+        StyleExtensionManager(StyleBehaviorMap map) {
             this.map = map;
         }
     }

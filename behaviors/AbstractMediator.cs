@@ -17,25 +17,13 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
-using SharpKit.Html;
-using guice;
-using randori.dom;
+using SharpKit.jQuery;
 
-namespace randori.startup {
-    public class RandoriApplication {
-        readonly Node rootNode;
-
-        public void launch() {
-            //Create the injector that will be used in the application
-            var guiceJs = new GuiceJs();
-            var injector = guiceJs.createInjector(new RandoriModule());
-
-            var domWalker = (DomWalker)injector.getInstance(typeof(DomWalker));
-            domWalker.walkDomFragment(rootNode, (InjectionClassBuilder)injector.getInstance(typeof(InjectionClassBuilder)));
-        }
-
-        public RandoriApplication(Node rootNode) {
-            this.rootNode = rootNode;
+namespace randori.behaviors {
+    /** just a stub for now. Destined for many better things **/
+    public abstract class AbstractMediator : AbstractBehavior {
+        public AbstractMediator(jQuery body)
+            : base(body) {
         }
     }
 }
