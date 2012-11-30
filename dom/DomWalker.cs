@@ -31,8 +31,8 @@ namespace randori.dom {
 
         readonly StyleExtensionManager styleExtensionManager;
         readonly LocalizationProvider localizationProvider;
-        DomExtensionFactory domExtensionFactory;
-        ElementDescriptorFactory elementDescriptorFactory;
+        readonly DomExtensionFactory domExtensionFactory;
+        readonly ElementDescriptorFactory elementDescriptorFactory;
 
         private void investigateLinkElement(HtmlLinkElement element) {
             if (styleExtensionManager.parsingNeeded( element )) {
@@ -60,6 +60,7 @@ namespace randori.dom {
             if (elementDescriptor.behavior != null) {
                 //build a context for this behavior IF it turns out that this particular element defines one
                 currentBehavior = domExtensionFactory.buildBehavior( classBuilder, element, elementDescriptor.behavior );
+                currentBehavior.preTraversalRegister();
                     
                 //we have a new behavior, this effectively causes us to use a new context for the nodes below it
                 //Make sure we add ourselves to our parent though
@@ -72,9 +73,9 @@ namespace randori.dom {
                 }                
             }
 
-            if (elementDescriptor.content != null) {
+            if (elementDescriptor.fragment != null) {
                 //build a context for this behavior IF it turns out that this particular element defines one
-                domExtensionFactory.buildNewContent(element, elementDescriptor.content);
+                domExtensionFactory.buildNewContent(element, elementDescriptor.fragment);
             }
 
             walkChildren(element, classBuilder, currentBehavior);

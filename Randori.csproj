@@ -42,6 +42,7 @@
     <Compile Include="attributes\View.cs" />
     <Compile Include="behaviors\AbstractBehavior.cs" />
     <Compile Include="behaviors\AbstractMediator.cs" />
+    <Compile Include="behaviors\template\TemplateRenderer.cs" />
     <Compile Include="content\ContentResolver.cs" />
     <Compile Include="content\ContentLoader.cs" />
     <Compile Include="content\ContentParser.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="styles\StyleExtensionManager.cs" />
     <Compile Include="styles\StyleBehaviorMap.cs" />
     <Compile Include="styles\StyleExtensionMapEntry.cs" />
+    <Compile Include="template\TemplateBuilder.cs" />
     <Compile Include="timer\Timer.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,13 +21,12 @@ using SharpKit.Html;
 using SharpKit.JavaScript;
 using guice;
 using randori.behaviors;
-using SharpKit.jQuery;
 
 namespace randori.dom {
     public class DomExtensionFactory {
 
         public AbstractBehavior buildBehavior(InjectionClassBuilder classBuilder, HtmlElement element, JsString behaviorClassName ) {
-            var behavior = (AbstractBehavior)classBuilder.buildClass(behaviorClassName, jQueryContext.J(element));
+            var behavior = (AbstractBehavior)classBuilder.buildClass(behaviorClassName, element);
             return behavior;
         }
 

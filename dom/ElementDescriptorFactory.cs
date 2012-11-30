@@ -27,7 +27,7 @@ namespace randori.dom {
     public class ElementDescriptor {
         public JsString context;
         public JsString behavior;
-        public JsString content;
+        public JsString fragment;
         public JsString formatter;
         public JsString validator;
     }
@@ -42,7 +42,7 @@ namespace randori.dom {
             var descriptor = new ElementDescriptor {
                 context = element.getAttribute("data-context"),
                 behavior = element.hasAttribute("data-mediator") ? element.getAttribute("data-mediator") : element.getAttribute("data-behavior"),
-                content = element.getAttribute( "data-content" ),
+                fragment = element.getAttribute("data-fragment"),
                 formatter = element.getAttribute( "data-formatter" ),
                 validator = element.getAttribute( "data-validator" )
             };
@@ -57,8 +57,8 @@ namespace randori.dom {
                     descriptor.behavior = entry.hasExtensionType("mediator")?entry.getExtensionClass("mediator"):entry.getExtensionClass("behavior");
                 }
 
-                if (descriptor.content == null) {
-                    descriptor.content = entry.getExtensionClass("content");
+                if (descriptor.fragment == null) {
+                    descriptor.fragment = entry.getExtensionClass("fragment");
                 }
 
                 if (descriptor.formatter == null) {

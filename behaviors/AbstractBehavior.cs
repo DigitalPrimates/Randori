@@ -26,17 +26,17 @@ namespace randori.behaviors {
 
     public abstract class AbstractBehavior {
 
-        protected jQuery rootElement;
+        protected HtmlElement rootElement;
         protected JsObject<object> viewElementIDMap;
         protected JsObject<object> viableInjectionPoints;
 
         //This highlights the need for some type of decorator more than an extension methodolofy for something becoming a behavior
         public void hide() {
-            rootElement.hide();
+            //rootElement.hide();
         }
 
         public void show() {
-            rootElement.show();
+            //rootElement.show();
         }
 
         protected object getViewElementByID( JsString id ) {
@@ -63,7 +63,7 @@ namespace randori.behaviors {
 
         public void verifyAndRegister() {
             foreach (var id in viableInjectionPoints) {
-                if (viableInjectionPoints[id] == "req") {
+                if (viableInjectionPoints[id].As<JsString>() == "req") {
                     dynamic instance = this;
                     var typeDefinition = new TypeDefinition(instance.constructor);
 
@@ -96,7 +96,7 @@ namespace randori.behaviors {
             return map;
         }
 
-        public AbstractBehavior(jQuery rootElement) {
+        public AbstractBehavior(HtmlElement rootElement) {
             this.rootElement = rootElement;
         }
     }

@@ -17,16 +17,17 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 using SharpKit.JavaScript;
+using randori.attributes;
 
 namespace randori.i18n {
 
-    [JsType(Export = false)]
+    [JsType(JsMode.Prototype,Export = false)]
     public delegate void TranslationResult(JsString domain, JsArray<Translation> translations);
 
     [JsType(JsMode.Json)]
     public enum Domains { Labels, Messages, Reference };
 
-    [JsType(Export=false,Name = "Object")]
+    [JsType(JsMode.Prototype,Export = false, Name = "Object")]
     public class Translation {
         public JsString key;
         public dynamic value;

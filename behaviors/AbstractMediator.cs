@@ -17,12 +17,13 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
+using SharpKit.Html;
 using SharpKit.jQuery;
 
 namespace randori.behaviors {
     /** just a stub for now. Destined for many better things **/
     public abstract class AbstractMediator : AbstractBehavior {
-        public AbstractMediator(jQuery body)
+        public AbstractMediator(HtmlElement body)
             : base(body) {
         }
     }

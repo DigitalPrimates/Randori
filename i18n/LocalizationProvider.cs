@@ -28,9 +28,9 @@ namespace randori.i18n {
 
         readonly JsRegExp internationalKey = new JsRegExp(@"\[(labels|messages|reference)\.\w+\]", "g");
 
-        AbstractTranslator translator;
-        JsObject<JsArray<Node>> pendingTranslations;
-        Timer timer;
+        readonly AbstractTranslator translator;
+        readonly JsObject<JsArray<Node>> pendingTranslations;
+        readonly Timer timer;
 
         JsRegExpResult getElementLocalizationComponents( Node textNode ) {
             var textContent = textNode.nodeValue;
@@ -77,9 +77,9 @@ namespace randori.i18n {
         }
 
         private void sendTranslationRequest(Timer timer) {
-            JsObject<JsArray<JsString>> domainLabels = new JsObject<JsArray<JsString>>();
+            var domainLabels = new JsObject<JsArray<JsString>>();
 
-            JsRegExp keyValuePair = new JsRegExp(@"\[(labels|messages|reference)\.(\w+)\]");
+            var keyValuePair = new JsRegExp(@"\[(labels|messages|reference)\.(\w+)\]");
             JsRegExpResult result;
 
             JsString domain;
