@@ -60,7 +60,6 @@ namespace randori.dom {
             if (elementDescriptor.behavior != null) {
                 //build a context for this behavior IF it turns out that this particular element defines one
                 currentBehavior = domExtensionFactory.buildBehavior( classBuilder, element, elementDescriptor.behavior );
-                currentBehavior.preTraversalRegister();
                     
                 //we have a new behavior, this effectively causes us to use a new context for the nodes below it
                 //Make sure we add ourselves to our parent though
