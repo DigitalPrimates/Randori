@@ -18,10 +18,11 @@
  */
 
 using System;
+using SharpKit.JavaScript;
 
 namespace randori.attributes {
 
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
     public class HtmlMergedFile : Attribute {
 
         // Summary:
@@ -38,5 +39,12 @@ namespace randori.attributes {
             set;
         }
 
+        public static JsArray<JsString> getCachedFileList() {
+            return new JsArray<JsString>();
+        }
+
+        public static JsString getCachedHtmlForUri(JsString fileName) {
+            return "";
+        }
     }
 }
