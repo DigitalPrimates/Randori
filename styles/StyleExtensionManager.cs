@@ -159,7 +159,9 @@ namespace randori.styles {
                             dpVendorItemStr = dpVendorItemsResult[j];
                             dpVendorItemInfoResult = dpVendorItemStr.match(dpVendorItemsDetail);
                             map.addBehaviorEntry(CSSClassSelectorName, dpVendorItemInfoResult[1], dpVendorItemInfoResult[2]);
-                            HtmlContext.console.log(CSSClassSelectorName + " specifies a " + dpVendorItemInfoResult[1] + " implemented by class " + dpVendorItemInfoResult[2]);
+                            if (HtmlContext.console != null) {
+                                HtmlContext.console.log(CSSClassSelectorName + " specifies a " + dpVendorItemInfoResult[1] + " implemented by class " + dpVendorItemInfoResult[2]);
+                            }
                         }
                     }
                 }
