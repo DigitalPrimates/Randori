@@ -26,14 +26,14 @@ namespace randori.attributes {
 
         // Summary:
         //     The target merged file name
-        public string filename {
+        public string Filename {
             get;
             set;
         }
         //
         // Summary:
         //     The source files to merge
-        public string[] sources {
+        public string[] Sources {
             get;
             set;
         }
