@@ -19,19 +19,23 @@
 
 using SharpKit.Html;
 using SharpKit.JavaScript;
+using SharpKit.jQuery;
 using guice;
 using randori.behaviors;
+using randori.content;
 
 namespace randori.dom {
     public class DomExtensionFactory {
+        readonly ContentLoader contentLoader;
 
         public AbstractBehavior buildBehavior(InjectionClassBuilder classBuilder, HtmlElement element, JsString behaviorClassName ) {
-            var behavior = (AbstractBehavior)classBuilder.buildClass(behaviorClassName, element);
+            var behavior = (AbstractBehavior)classBuilder.buildClass(behaviorClassName);
+            behavior.provideDecoratedElement(element);
             return behavior;
         }
 
-        public void buildNewContent(HtmlElement element, JsString contentURL) {
-
+        public void buildNewContent(HtmlElement element, JsString fragmentURL) {
+            jQueryContext.J(element).append(contentLoader.synchronousLoad(fragmentURL));
         }
 
         public InjectionClassBuilder buildChildClassBuilder(InjectionClassBuilder classBuilder, HtmlElement element, JsString contextClassName) {
@@ -44,7 +48,8 @@ namespace randori.dom {
             return (InjectionClassBuilder)injector.getInstance(typeof(InjectionClassBuilder));
         }
 
-        public DomExtensionFactory() {
+        public DomExtensionFactory( ContentLoader contentLoader ) {
+            this.contentLoader = contentLoader;
         }
     }
 }

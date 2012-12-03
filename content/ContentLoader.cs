@@ -17,13 +17,23 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
+using SharpKit.Html;
 using SharpKit.JavaScript;
 
 namespace randori.content {
 
-    class ContentLoader {
-        public JsString synchronousLoad() {
-            return "";
+    public class ContentLoader {
+        public JsString synchronousLoad(JsString fragmentURL) {
+            //We need to check to see if we already have this content. If we do not, then we need to load it now and insert it into the DOM
+            var request = new XMLHttpRequest();
+            request.open("GET", fragmentURL, false);
+            request.send("");
+
+            if (request.status == 404) {
+                throw new JsError("Cannot continue, missing required content " + fragmentURL);
+            }
+
+            return request.responseText;
         }
 
         public void asynchronousLoad() {

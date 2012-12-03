@@ -18,7 +18,6 @@
  */
 
 using SharpKit.Html;
-using SharpKit.JavaScript;
 using randori.styles;
 
 namespace randori.content {

@@ -20,15 +20,21 @@
 using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
+using guice;
 using randori.attributes;
+using randori.dom;
 using randori.template;
 
 namespace randori.behaviors.template {
     public class TemplateRenderer : AbstractBehavior {
-        [Inject]
-        public TemplateBuilder templateBuilder;
+
+        jQuery rootNode;
+        readonly DomWalker domWalker;
+        readonly InjectionClassBuilder classBuilder;
+        readonly TemplateBuilder templateBuilder;
 
         protected JsObject _data;
+
         public JsObject data {
             get { return _data; }
             set {
@@ -38,16 +44,29 @@ namespace randori.behaviors.template {
             }
         }
 
+        protected override void onPreRegister() {
+            base.onPreRegister();
+
+            this.rootNode = jQueryContext.J(decoratedElement);
+            templateBuilder.captureAndEmptyTemplateContents(rootNode);
+        }
+
         protected void renderMessage() {
-            rootElement = templateBuilder.replaceTemplate(rootElement, data, this);
+            //If the first part of the newNode is text and not an actual node, jQuery loses it during an append
+            //So this is the only method I have been able to figure out that actually keeps those first text nodes
+            //which is really important during templating
+            var newNode = templateBuilder.renderTemplateClone(data);
+            rootNode.html(newNode.html());
+            domWalker.walkChildren(decoratedElement, classBuilder, this);
         }
 
         protected override void onRegister() {
-            rootElement = templateBuilder.parseAndReplaceTemplate(rootElement);
         }
 
-        public TemplateRenderer(HtmlElement rootElement)
-            : base(rootElement) {
+        public TemplateRenderer(InjectionClassBuilder classBuilder, DomWalker domWalker, TemplateBuilder templateBuilder) {
+            this.domWalker = domWalker;
+            this.classBuilder = classBuilder;
+            this.templateBuilder = templateBuilder;
         }
     }
 }

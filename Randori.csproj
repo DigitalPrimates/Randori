@@ -38,6 +38,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="attributes\HtmlMergedFile.cs" />
     <Compile Include="attributes\Inject.cs" />
     <Compile Include="attributes\View.cs" />
     <Compile Include="behaviors\AbstractBehavior.cs" />

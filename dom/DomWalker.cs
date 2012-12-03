@@ -60,7 +60,7 @@ namespace randori.dom {
             if (elementDescriptor.behavior != null) {
                 //build a context for this behavior IF it turns out that this particular element defines one
                 currentBehavior = domExtensionFactory.buildBehavior( classBuilder, element, elementDescriptor.behavior );
-                    
+
                 //we have a new behavior, this effectively causes us to use a new context for the nodes below it
                 //Make sure we add ourselves to our parent though
                 if (id != null && parentBehavior != null) {
@@ -108,7 +108,7 @@ namespace randori.dom {
             }
         }
 
-        private void walkChildren(Node parentNode, InjectionClassBuilder classBuilder, AbstractBehavior parentBehavior = null) {
+        public void walkChildren(Node parentNode, InjectionClassBuilder classBuilder, AbstractBehavior parentBehavior = null) {
             var node = parentNode.firstChild;
 
             while (node != null) {

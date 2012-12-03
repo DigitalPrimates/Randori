@@ -26,9 +26,9 @@ namespace randori.behaviors {
 
     public abstract class AbstractBehavior {
 
-        protected HtmlElement rootElement;
         protected JsObject<object> viewElementIDMap;
         protected JsObject<object> viableInjectionPoints;
+        protected HtmlElement decoratedElement;
 
         //This highlights the need for some type of decorator more than an extension methodolofy for something becoming a behavior
         public void hide() {
@@ -43,15 +43,18 @@ namespace randori.behaviors {
             return viewElementIDMap[id].As<jQuery>();
         }
 
+        //Its possible we want to do some things before our children are parsed..
+        //This helps facilitate us being a black box
+        protected virtual void onPreRegister() {
+            //setup our injection point requirements
+            if (this.viableInjectionPoints == null) {
+                this.viableInjectionPoints = getBehaviorInjectionPoints();
+            }
+        }
+
         protected abstract void onRegister();
 
         public void injectPotentialNode( JsString id, object node) {
-
-            //setup our injection point requirements
-            if ( this.viableInjectionPoints == null ) {
-                this.viableInjectionPoints = getBehaviorInjectionPoints();                
-            }
-
             //if we ever want to throw an error because of a duplicate id injection, this is the place to do it
             //right now first one in wins
             if (viableInjectionPoints[id] != null) {
@@ -59,6 +62,11 @@ namespace randori.behaviors {
                 dynamic instance = this;
                 instance[ id ] = node;
             }
+        }
+
+        public void provideDecoratedElement( HtmlElement element ) {
+            this.decoratedElement = element;
+            onPreRegister();
         }
 
         public void verifyAndRegister() {
@@ -96,8 +104,7 @@ namespace randori.behaviors {
             return map;
         }
 
-        public AbstractBehavior(HtmlElement rootElement) {
-            this.rootElement = rootElement;
+        public AbstractBehavior() {
         }
     }
 }

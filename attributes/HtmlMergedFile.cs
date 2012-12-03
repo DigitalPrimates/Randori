@@ -1,5 +1,5 @@
-﻿/***
- * Copyright 2012 LTN Consulting, Inc. /dba Digital Primates®
+/***
+ * Copyright 2012 LTN Consulting, Inc. /dba Digital Primates�
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,26 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
-using SharpKit.Html;
-using SharpKit.jQuery;
+using System;
 
-namespace randori.behaviors {
-    /** just a stub for now. Destined for many better things **/
-    public abstract class AbstractMediator : AbstractBehavior {
-        public AbstractMediator() {
+namespace randori.attributes {
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+    public class HtmlMergedFile : Attribute {
+
+        // Summary:
+        //     The target merged file name
+        public string filename {
+            get;
+            set;
         }
+        //
+        // Summary:
+        //     The source files to merge
+        public string[] sources {
+            get;
+            set;
+        }
+
     }
 }

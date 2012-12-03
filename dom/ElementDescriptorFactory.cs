@@ -50,24 +50,24 @@ namespace randori.dom {
             if ( entry != null ) {
                 if (descriptor.context == null) {
                     descriptor.context = entry.getExtensionClass("module");
-                }
+                } 
 
                 if (descriptor.behavior == null) {
                     //mediator and behavior are really the same thing and hence mutually exclusive
                     descriptor.behavior = entry.hasExtensionType("mediator")?entry.getExtensionClass("mediator"):entry.getExtensionClass("behavior");
-                }
+                } 
 
                 if (descriptor.fragment == null) {
                     descriptor.fragment = entry.getExtensionClass("fragment");
-                }
+                } 
 
                 if (descriptor.formatter == null) {
                     descriptor.formatter = entry.getExtensionClass("formatter");
-                }
+                } 
 
                 if (descriptor.validator == null) {
                     descriptor.validator = entry.getExtensionClass("validator");
-                }
+                } 
             }
 
             return descriptor;

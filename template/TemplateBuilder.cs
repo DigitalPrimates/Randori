@@ -26,38 +26,28 @@ using randori.dom;
 
 namespace randori.template {
     public class TemplateBuilder {
-        DomWalker domWalker;
         JsString templateAsString;
-        InjectionClassBuilder classBuilder;
 
         //We need to both parse it and remove it... if we dont then any behaviors setup on the template
         //will be created on the older nodes by the DomWalker. That is a problem
-        public HtmlElement parseAndReplaceTemplate(HtmlElement rootTemplateNode) {
-            templateAsString = rootTemplateNode.outerHTML;
-            jQuery replacementNode = jQueryContext.J( "<div></div>" );
-            jQueryContext.J(rootTemplateNode).replaceWith(replacementNode);
-            return replacementNode[ 0 ];
-        }
 
-        public HtmlElement replaceTemplate(HtmlElement existingNode, JsObject data, AbstractBehavior parentBehavior) {
-            jQuery newNode = renderTemplateClone(data, parentBehavior);
-            jQuery jExistingNode = jQueryContext.J(existingNode);
-
-            jExistingNode.replaceWith(newNode);
-            return newNode[0];
+        //Also, be really careful. IF you replace a node in the DOM while you are walking the DOM, it will no longer know its Siblings... joy
+        public void captureAndEmptyTemplateContents(jQuery rootTemplateNode) {
+            templateAsString = rootTemplateNode.html();
+            jQueryContext.J( rootTemplateNode ).empty();
         }
 
         private JsString returnFieldName( JsString token ) {
             return token.substr( 1, token.length - 2 );
         }
 
-        public jQuery renderTemplateClone(JsObject data, AbstractBehavior parentBehavior ) {
+        public jQuery renderTemplateClone(JsObject data ) {
             JsString token;
             JsString field;
             dynamic dereferencedValue;
-            JsRegExp keyRegex = new JsRegExp(@"\{[\w\W]+?\}", "g");
-            JsRegExpResult foundKeys = templateAsString.match(keyRegex);
-            JsString output = templateAsString;
+            var keyRegex = new JsRegExp(@"\{[\w\W]+?\}", "g");
+            var foundKeys = templateAsString.match(keyRegex);
+            var output = templateAsString;
 
             if (foundKeys != null) {
                 for ( int j = 0; j < foundKeys.length; j++ ) {
@@ -77,10 +67,8 @@ namespace randori.template {
                 }
             }
 
-            jQuery fragmentJquery = jQueryContext.J( output );
-
-            Node fragment = fragmentJquery[0];
-            domWalker.walkDomFragment(fragment, classBuilder, parentBehavior);
+            jQuery fragmentJquery = jQueryContext.J("<div></div>");
+            fragmentJquery.append(output);
 
             return fragmentJquery;
         }
@@ -99,9 +87,7 @@ namespace randori.template {
             return nextLevel;
         }
 
-        public TemplateBuilder( DomWalker domWalker, InjectionClassBuilder classBuilder ) {
-            this.domWalker = domWalker;
-            this.classBuilder = classBuilder;
+        public TemplateBuilder() {
         }
     }
 }
