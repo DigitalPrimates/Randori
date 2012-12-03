@@ -33,6 +33,7 @@ namespace randori.dom {
         readonly LocalizationProvider localizationProvider;
         readonly DomExtensionFactory domExtensionFactory;
         readonly ElementDescriptorFactory elementDescriptorFactory;
+        readonly InjectionClassBuilder classBuilder;
 
         private void investigateLinkElement(HtmlLinkElement element) {
             if (styleExtensionManager.parsingNeeded( element )) {
@@ -40,8 +41,9 @@ namespace randori.dom {
             }
         }
 
-        private void investigateDomElement(HtmlElement element, InjectionClassBuilder classBuilder, AbstractBehavior parentBehavior) {
+        private void investigateDomElement(HtmlElement element, AbstractBehavior parentBehavior) {
             var currentBehavior = parentBehavior;
+            var domWalker = this;
 
             var id = element.getAttribute("id");
 
@@ -54,7 +56,9 @@ namespace randori.dom {
 
             if (elementDescriptor.context != null) {
                 //change the class builder for everything under this point in the DOM
-                classBuilder = domExtensionFactory.buildChildClassBuilder(classBuilder, element, elementDescriptor.context);
+                var newClassBuilder = domExtensionFactory.buildChildClassBuilder(classBuilder, element, elementDescriptor.context);
+                //change the domWalker for everything under this point in the DOM
+                domWalker = (DomWalker)newClassBuilder.buildClass("randori.dom.DomWalker");
             }
 
             if (elementDescriptor.behavior != null) {
@@ -77,7 +81,7 @@ namespace randori.dom {
                 domExtensionFactory.buildNewContent(element, elementDescriptor.fragment);
             }
 
-            walkChildren(element, classBuilder, currentBehavior);
+            domWalker.walkChildren(element, currentBehavior);
 
             //Now that we have figured out all of the items under this dom element, setup the behavior
             if (currentBehavior != null && currentBehavior != parentBehavior) {
@@ -85,7 +89,7 @@ namespace randori.dom {
             }
         }
 
-        private void investigateNode(Node node, InjectionClassBuilder classBuilder, AbstractBehavior parentBehavior) {
+        private void investigateNode(Node node, AbstractBehavior parentBehavior) {
 
             if (node.nodeType == Node.ELEMENT_NODE) {
 
@@ -97,35 +101,36 @@ namespace randori.dom {
                 if ( node.nodeName == "LINK" ) {
                     investigateLinkElement(node.As<HtmlLinkElement>());
                 } else {
-                    investigateDomElement(node.As<HtmlElement>(), classBuilder, parentBehavior);
+                    investigateDomElement(node.As<HtmlElement>(), parentBehavior);
                 }
 
             } else if (node.nodeType == Node.TEXT_NODE) {
                 //This is a text node, check to see if it needs internationalization
                 localizationProvider.investigateTextNode(node);
             } else {
-                walkChildren(node, classBuilder, parentBehavior);
+                walkChildren(node, parentBehavior);
             }
         }
 
-        public void walkChildren(Node parentNode, InjectionClassBuilder classBuilder, AbstractBehavior parentBehavior = null) {
+        public void walkChildren(Node parentNode, AbstractBehavior parentBehavior = null) {
             var node = parentNode.firstChild;
 
             while (node != null) {
-                investigateNode(node, classBuilder, parentBehavior);
+                investigateNode(node, parentBehavior);
                 node = node.nextSibling;
             }
         }
 
-        public void walkDomFragment(Node node, InjectionClassBuilder classBuilder, AbstractBehavior parentBehavior = null) {
-            investigateNode(node, classBuilder, parentBehavior);
+        public void walkDomFragment(Node node, AbstractBehavior parentBehavior = null) {
+            investigateNode(node, parentBehavior);
         }
 
-        public DomWalker(DomExtensionFactory domExtensionFactory, ElementDescriptorFactory elementDescriptorFactory, StyleExtensionManager styleExtensionManager,  LocalizationProvider localizationProvider) {
+        public DomWalker(DomExtensionFactory domExtensionFactory, InjectionClassBuilder classBuilder, ElementDescriptorFactory elementDescriptorFactory, StyleExtensionManager styleExtensionManager, LocalizationProvider localizationProvider) {
             this.domExtensionFactory = domExtensionFactory;
             this.elementDescriptorFactory = elementDescriptorFactory;
             this.styleExtensionManager = styleExtensionManager;
             this.localizationProvider = localizationProvider;
+            this.classBuilder = classBuilder;
         }
     }
 }

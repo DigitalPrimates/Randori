@@ -49,7 +49,7 @@ namespace randori.dom {
 
             if ( entry != null ) {
                 if (descriptor.context == null) {
-                    descriptor.context = entry.getExtensionClass("module");
+                    descriptor.context = entry.getExtensionClass("context");
                 } 
 
                 if (descriptor.behavior == null) {

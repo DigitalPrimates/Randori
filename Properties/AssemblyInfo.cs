@@ -36,4 +36,5 @@ using SharpKit.JavaScript;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: JsType(JsMode.Prototype, OmitCasts = true)]
+[assembly: JsType(JsMode.Prototype, OmitCasts = true, NativeJsons = true)]
+

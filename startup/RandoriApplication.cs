@@ -31,7 +31,7 @@ namespace randori.startup {
             var injector = guiceJs.createInjector(new RandoriModule());
 
             var domWalker = (DomWalker)injector.getInstance(typeof(DomWalker));
-            domWalker.walkDomFragment(rootNode, (InjectionClassBuilder)injector.getInstance(typeof(InjectionClassBuilder)));
+            domWalker.walkDomFragment(rootNode);
         }
 
         public RandoriApplication(Node rootNode) {
