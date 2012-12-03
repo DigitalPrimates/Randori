@@ -17,7 +17,6 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 using SharpKit.JavaScript;
-using randori.attributes;
 
 namespace randori.i18n {
 
