@@ -19,8 +19,6 @@
 
 using SharpKit.Html;
 using SharpKit.JavaScript;
-using SharpKit.jQuery;
-using randori.attributes;
 
 namespace randori.styles {
 
@@ -48,10 +46,10 @@ namespace randori.styles {
             StyleExtensionMapEntry mergedEntry = null;
 
             if (cssClassList != null) {
-                JsArray cssClassArray = cssClassList.split(" ");
+                var cssClassArray = cssClassList.split(" ");
                 for (int i = 0; i < cssClassArray.length; i++) {
-                    JsString cssClass = cssClassArray[i].As<JsString>();
-                    StyleExtensionMapEntry extensionMapEntry = map.getBehaviorEntry(cssClass);
+                    var cssClass = cssClassArray[i].As<JsString>();
+                    var extensionMapEntry = map.getBehaviorEntry(cssClass);
 
                     if (extensionMapEntry != null) {
                         if (mergedEntry == null) {
