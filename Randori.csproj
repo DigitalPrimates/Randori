@@ -47,6 +47,7 @@
     <Compile Include="behaviors\template\TemplateRenderer.cs" />
     <Compile Include="behaviors\ViewStack.cs" />
     <Compile Include="behaviors\viewStack\ViewChangeAnimator.cs" />
+    <Compile Include="content\ContentCache.cs" />
     <Compile Include="content\ContentResolver.cs" />
     <Compile Include="content\ContentLoader.cs" />
     <Compile Include="content\ContentParser.cs" />

@@ -1,5 +1,5 @@
-/***
- * Copyright 2012 LTN Consulting, Inc. /dba Digital Primates�
+﻿/***
+ * Copyright 2012 LTN Consulting, Inc. /dba Digital Primates®
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,16 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
-using System;
 using SharpKit.JavaScript;
 
-namespace randori.attributes {
-
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
-    public class HtmlMergedFile : Attribute {
-
-        // Summary:
-        //     The target merged file name
-        public string Filename {
-            get;
-            set;
+namespace randori.content {
+    public class ContentCache {
+        public JsArray<JsString> getCachedFileList() {
+            return new JsArray<JsString>();
         }
-        //
-        // Summary:
-        //     The source files to merge
-        public string[] Sources {
-            get;
-            set;
+
+        public JsString getCachedHtmlForUri(JsString fileName) {
+            return "";
         }
     }
 }

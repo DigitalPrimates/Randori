@@ -23,8 +23,17 @@ using SharpKit.JavaScript;
 namespace randori.content {
 
     public class ContentLoader {
+        readonly ContentCache contentCache;
+
         public JsString synchronousLoad(JsString fragmentURL) {
             //We need to check to see if we already have this content. If we do not, then we need to load it now and insert it into the DOM
+
+            var cachedContent = contentCache.getCachedHtmlForUri(fragmentURL);
+            if (cachedContent != null) {
+                return cachedContent;
+            }
+
+            //Else load it now
             var request = new XMLHttpRequest();
             request.open("GET", fragmentURL, false);
             request.send("");
@@ -38,6 +47,10 @@ namespace randori.content {
 
         public void asynchronousLoad() {
 
+        }
+
+        public ContentLoader( ContentCache contentCache ) {
+            this.contentCache = contentCache;
         }
     }
 }

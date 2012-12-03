@@ -20,31 +20,37 @@
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using randori.behaviors.viewStack;
+using randori.content;
 
 namespace randori.behaviors {
     [JsType(JsMode.Prototype, OmitCasts = true, NativeOverloads = false)]
     public class ViewStack : AbstractBehavior {
         readonly ViewChangeAnimator viewChangeAnimator;
+        readonly ContentLoader contentLoader;
 
-        private int _currentIndex;
-        public int currentIndex {
-            get {
-                return _currentIndex;
-            }
-        }
+        private JsString _currentView;
 
         public bool hasView(JsString url) {
             return false;
         }
 
-        public void addView(JsString url, object data = null) {
+        public void addView(JsString url) {
         }
 
-        public void selectView(JsString url, object data = null) {
+        public JsString currentView {
+            get {
+                return _currentView;
+            }
+            set {
+                selectView(value);
+            }
         }
 
-        public void selectView(int index, object data = null) {
+        private void selectView(JsString url) {
+            _currentView = url;
+            //contentLoader
         }
+
 
         private jQuery transitionViews(jQuery arrivingView, jQuery departingView, object data = null) {
             return null;
@@ -54,7 +60,8 @@ namespace randori.behaviors {
             
         }
 
-        public ViewStack(ViewChangeAnimator viewChangeAnimator) {
+        public ViewStack(ContentLoader contentLoader, ViewChangeAnimator viewChangeAnimator) {
+            this.contentLoader = contentLoader;
             this.viewChangeAnimator = viewChangeAnimator;
         }
     }
