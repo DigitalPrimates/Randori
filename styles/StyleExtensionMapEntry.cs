@@ -25,15 +25,15 @@ namespace randori.styles {
 
         public JsObject<JsString> hashMap;
 
-        public void addExtensionType(JsString extensionType, JsString className ) {
-            hashMap[extensionType] = className;
+        public void addExtensionType(JsString extensionType, JsString extensionValue ) {
+            hashMap[extensionType] = extensionValue;
         }
 
         public bool hasExtensionType(JsString extensionType) {
             return (hashMap[extensionType] != null);
         }
 
-        public JsString getExtensionClass(JsString extensionType) {
+        public JsString getExtensionValue(JsString extensionType) {
             return hashMap[extensionType];
         }
 

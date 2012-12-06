@@ -24,14 +24,14 @@ namespace randori.i18n {
     class NoOpTranslator : AbstractTranslator {
 
         public override JsArray<Translation> synchronousTranslate(JsString domain, JsArray<JsString> keys) {
-            if (HtmlContext.console != null) {
+            if (HtmlContext.window.console != null) {
                 HtmlContext.console.log("Requested to translate: " + domain + " " + keys);
             }
             return new JsArray<Translation>();
         }
 
         public override void translate(JsString domain, JsArray<JsString> keys) {
-            if (HtmlContext.console != null) {
+            if (HtmlContext.window.console != null) {
                 HtmlContext.console.log("Requested to translate: " + domain + " " + keys);
             }
         }

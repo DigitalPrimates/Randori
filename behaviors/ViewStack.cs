@@ -58,7 +58,7 @@ namespace randori.behaviors {
             rootElement.append(div);
             views[url] = fragment;
 
-            currentView = url;
+            selectView( url );
         }
 
         public void removeView(JsString url) {
@@ -78,15 +78,16 @@ namespace randori.behaviors {
             get {
                 return _currentView;
             }
-            set {
-                selectView(value);
-            }
         }
 
-        private void selectView(JsString url) {
+        public void selectView(JsString url) {
             if ( _currentView != url ) {
                 var oldFragment = views[_currentView];
                 var fragment = views[url];
+
+                if (fragment == null ) {
+                    throw new JsError("Unknown View");
+                }
 
                 if (oldFragment!= null) {
                     oldFragment.hide();
@@ -94,7 +95,7 @@ namespace randori.behaviors {
 
                 _currentView = url;
                 fragment.show();
-            }
+            } 
         }
 
         private jQuery transitionViews(jQuery arrivingView, jQuery departingView, object data = null) {

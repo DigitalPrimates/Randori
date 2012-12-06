@@ -17,8 +17,10 @@
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
 
+using System.Collections.Generic;
 using SharpKit.Html;
 using SharpKit.JavaScript;
+using randori.data;
 
 namespace randori.styles {
 
@@ -36,11 +38,96 @@ namespace randori.styles {
     [JsType(Export = false)]
     public delegate void DataRetrievedDelegate( object o );
 
-    public class StyleExtensionManager  {
+    public class StyleExtensionManager {
 
-        readonly StyleBehaviorMap map;
+        readonly StyleExtensionMap map;
+
+        private JsArray<HtmlElement> findChildNodesForSelector(JsArray<HtmlElement> elements, JsArray<JsString> selectorArray) {
+            var selector = selectorArray.shift();
+
+            //We need to actually abstract this so we can deal with IE and Opera returning a collection instead of a NodeList
+
+            var newElements = new JsArray<HtmlElement>();
+
+            if ( selector.substr( 0, 1 ) == "." ) {
+                var className = selector.substring( 1 );
+                //Lets assume this is a class selector
+                while ( elements.length > 0 ) {
+                    var element = elements.pop();
+                    var nodes = element.getElementsByClassName( className );
+                    for ( var j=0; j<nodes.length; j++) {
+                        newElements.push( nodes[ j ].As<HtmlElement>() );
+                    }
+                }
+
+            } else {
+                //invalid but going to assume type for now
+                while (elements.length > 0) {
+                    var element = elements.pop();
+                    var nodes = element.getElementsByTagName(selector);
+                    
+                    for (var j = 0; j < nodes.length; j++) {
+                        newElements.push( nodes[j].As<HtmlElement>() );
+                    }
+                }
+            }
+
+            //Only recurse if there is another selector
+            if (selectorArray.length > 0) {
+                newElements = findChildNodesForSelector(newElements, selectorArray);
+            }
+
+            return newElements;
+        }
+
+        private JsArray<HtmlElement> findChildNodesForCompoundSelector(HtmlElement element, JsString selector) {
+            //lets start with simple ones
+            var selectors = selector.split( " " );
+
+            var ar = new JsArray<HtmlElement>();
+            ar.push(element);
+            var elements = findChildNodesForSelector( ar, selectors );
+
+            return elements;
+        }
+
+        public HashMap<StyleExtensionMapEntry> getExtensionsForFragment(HtmlElement element) {
+
+            var hashmap = new HashMap<StyleExtensionMapEntry>();
+            //We need to loop over all of the relevant entries in the map that define some behavior
+            var allEntries = map.getAllRandoriSelectorEntries();
+
+            for ( var i=0; i<allEntries.length; i++) {
+                JsArray<HtmlElement> implementingNodes = findChildNodesForCompoundSelector(element, allEntries[i]);
+
+                //For each of those entries, we need to see if we have any elements in this DOM fragment that implement any of those classes
+                for ( var j=0; j<implementingNodes.length; j++) {
+
+                    var implementingElement = implementingNodes[ j ];
+                    var value = hashmap.get( implementingElement );
+
+                    if ( value == null ) {
+                        //Get the needed entry
+                        var extensionEntry = map.getExtensionEntry(allEntries[i]);
+
+                        //give us a copy so we can screw with it at will
+                        hashmap.put(implementingElement, extensionEntry.clone());
+                    } else {
+                        //We already have data for this node, so we need to merge the new data into the existing one
+                        var extensionEntry = map.getExtensionEntry(allEntries[i]);
+
+                        extensionEntry.mergeTo( (StyleExtensionMapEntry)value );
+                    }
+                }
+            }
+
+            //return the hashmap which can be queried and applied to the Dom
+            return hashmap;
+        }
+
 
         //TODO consider moving this somewhere more appropriate
+        /*
         public StyleExtensionMapEntry getMergedEntryForElement(HtmlElement element) {
             JsString cssClassList = element.getAttribute("class");
             StyleExtensionMapEntry mergedEntry = null;
@@ -49,7 +136,7 @@ namespace randori.styles {
                 var cssClassArray = cssClassList.split(" ");
                 for (int i = 0; i < cssClassArray.length; i++) {
                     var cssClass = cssClassArray[i].As<JsString>();
-                    var extensionMapEntry = map.getBehaviorEntry(cssClass);
+                    var extensionMapEntry = map.getExtensionEntry(cssClass);
 
                     if (extensionMapEntry != null) {
                         if (mergedEntry == null) {
@@ -63,7 +150,7 @@ namespace randori.styles {
             }
 
             return mergedEntry;
-        }
+        }*/
 
         public bool parsingNeeded(HtmlLinkElement link) {
             return ( link.rel == "stylesheet/randori" );
@@ -114,32 +201,33 @@ namespace randori.styles {
         void parseAndPersistBehaviors(JsString sheet) {
 
             JsString classSelector;
-            JsRegExpResult dpVendorItemsResult;
-            JsRegExpResult dpVendorItemInfoResult;
+            JsRegExpResult randoriVendorItemsResult;
+            JsRegExpResult randoriVendorItemInfoResult;
             JsRegExpResult CSSClassSelectorNameResult;
             /*
              * This regular expression then grabs all of the class selectors
              * \.[\w\W]*?\}
              * 
-             * This expression finds an -randori vendor prefix styles in the current selector and returns 2 groups, the first
+             * This expression finds an -randori vendor prefix styles in the current cssSelector and returns 2 groups, the first
              * is the type, the second is the value
              * 
              * \s?-randori-([\w\W]+?)\s?:\s?["']?([\w\W]+?)["']?;
              * 
              */
 
-            var allClassSelectors = new JsRegExp("\\.[\\w\\W]*?\\}", "g");
+            var allClassSelectors = new JsRegExp(@"^[\w\W]*?\}", "gm");
 
+            const string RANDORI_VENDOR_ITEM_EXPRESSION = @"\s?-randori-([\w\W]+?)\s?:\s?[""']?([\w\W]+?)[""']?;";
             //These two are the same save for the global flag. The global flag seems to disable all capturing groups immediately
-            var dpVendorItems = new JsRegExp(@"\s?-randori-([\w\W]+?)\s?:\s?[""']?([\w\W]+?)[""']?;", "g");
+            var anyVendorItems = new JsRegExp(RANDORI_VENDOR_ITEM_EXPRESSION, "g");
 
             //This is the same as the one in findRelevant classes save for the the global flag... which is really important
             //The global flag seems to disable all capturing groups immediately
-            var dpVendorItemsDetail = new JsRegExp(@"\s?-randori-([\w\W]+?)\s?:\s?[""']?([\w\W]+?)[""']?;");
+            var eachVendorItem = new JsRegExp(RANDORI_VENDOR_ITEM_EXPRESSION);
 
-            var classSelectorName = new JsRegExp(@"\.([\W\w]+?)\s+?{");
+            var classSelectorName = new JsRegExp(@"^(.+?)\s+?{","m");
             JsString CSSClassSelectorName;
-            JsString dpVendorItemStr;
+            JsString randoriVendorItemStr;
 
             var selectors = sheet.match(allClassSelectors);
 
@@ -147,18 +235,18 @@ namespace randori.styles {
                 for (int i = 0; i < selectors.length; i++) {
                     classSelector = selectors[i];
 
-                    dpVendorItemsResult = classSelector.match(dpVendorItems);
-                    if (dpVendorItemsResult != null) {
+                    randoriVendorItemsResult = classSelector.match(anyVendorItems);
+                    if (randoriVendorItemsResult != null) {
 
                         CSSClassSelectorNameResult = classSelector.match(classSelectorName);
                         CSSClassSelectorName = CSSClassSelectorNameResult[1];
 
-                        for (int j = 0; j < dpVendorItemsResult.length; j++) {
-                            dpVendorItemStr = dpVendorItemsResult[j];
-                            dpVendorItemInfoResult = dpVendorItemStr.match(dpVendorItemsDetail);
-                            map.addBehaviorEntry(CSSClassSelectorName, dpVendorItemInfoResult[1], dpVendorItemInfoResult[2]);
-                            if (HtmlContext.console != null) {
-                                HtmlContext.console.log(CSSClassSelectorName + " specifies a " + dpVendorItemInfoResult[1] + " implemented by class " + dpVendorItemInfoResult[2]);
+                        for (int j = 0; j < randoriVendorItemsResult.length; j++) {
+                            randoriVendorItemStr = randoriVendorItemsResult[j];
+                            randoriVendorItemInfoResult = randoriVendorItemStr.match(eachVendorItem);
+                            map.addCSSEntry(CSSClassSelectorName, randoriVendorItemInfoResult[1], randoriVendorItemInfoResult[2]);
+                            if (HtmlContext.window.console != null) {
+                                HtmlContext.console.log(CSSClassSelectorName + " specifies a " + randoriVendorItemInfoResult[1] + " implemented by class " + randoriVendorItemInfoResult[2]);
                             }
                         }
                     }
@@ -170,7 +258,7 @@ namespace randori.styles {
             resolveSheet(resetLinkAndReturnURL(element));
         }
 
-        StyleExtensionManager(StyleBehaviorMap map) {
+        StyleExtensionManager(StyleExtensionMap map) {
             this.map = map;
         }
     }

@@ -19,6 +19,7 @@
 
 using SharpKit.Html;
 using SharpKit.JavaScript;
+using randori.data;
 using randori.styles;
 
 namespace randori.dom {
@@ -35,10 +36,10 @@ namespace randori.dom {
     public class ElementDescriptorFactory {
         readonly StyleExtensionManager styleExtensionManager;
 
-        public ElementDescriptor describeElement(HtmlElement element ) {
+        public ElementDescriptor describeElement(HtmlElement element, HashMap<StyleExtensionMapEntry> possibleExtensions ) {
             //This is purely an efficiency gain. By making a merged map for this one element, we stop everyone from cycling through 
             //every class on an element to pull out their own piece of data
-            var entry = styleExtensionManager.getMergedEntryForElement(element);
+            var entry = possibleExtensions.get(element);
             var descriptor = new ElementDescriptor {
                 context = element.getAttribute("data-context"),
                 behavior = element.hasAttribute("data-mediator") ? element.getAttribute("data-mediator") : element.getAttribute("data-behavior"),
@@ -49,24 +50,24 @@ namespace randori.dom {
 
             if ( entry != null ) {
                 if (descriptor.context == null) {
-                    descriptor.context = entry.getExtensionClass("context");
+                    descriptor.context = entry.getExtensionValue("context");
                 } 
 
                 if (descriptor.behavior == null) {
                     //mediator and behavior are really the same thing and hence mutually exclusive
-                    descriptor.behavior = entry.hasExtensionType("mediator")?entry.getExtensionClass("mediator"):entry.getExtensionClass("behavior");
+                    descriptor.behavior = entry.hasExtensionType("mediator")?entry.getExtensionValue("mediator"):entry.getExtensionValue("behavior");
                 } 
 
                 if (descriptor.fragment == null) {
-                    descriptor.fragment = entry.getExtensionClass("fragment");
+                    descriptor.fragment = entry.getExtensionValue("fragment");
                 } 
 
                 if (descriptor.formatter == null) {
-                    descriptor.formatter = entry.getExtensionClass("formatter");
+                    descriptor.formatter = entry.getExtensionValue("formatter");
                 } 
 
                 if (descriptor.validator == null) {
-                    descriptor.validator = entry.getExtensionClass("validator");
+                    descriptor.validator = entry.getExtensionValue("validator");
                 } 
             }
 

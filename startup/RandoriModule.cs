@@ -26,8 +26,8 @@ namespace randori.startup {
 
     public class RandoriModule : GuiceModule {
         override public void configure(Binder binder) {
-            //make the StyleBehaviorMap a Singleton
-            binder.bind(typeof(StyleBehaviorMap)).inScope(Scope.Singleton).to(typeof(StyleBehaviorMap));
+            //make the StyleExtensionMap a Singleton
+            binder.bind(typeof(StyleExtensionMap)).inScope(Scope.Singleton).to(typeof(StyleExtensionMap));
 
             //Setup a NoOp translator as the default
             binder.bind(typeof(AbstractTranslator)).to(typeof(NoOpTranslator));

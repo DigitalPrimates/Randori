@@ -22,6 +22,7 @@ using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using guice;
 using randori.behaviors;
+using randori.data;
 using randori.i18n;
 using randori.styles;
 
@@ -35,9 +36,15 @@ namespace randori.dom {
         readonly ElementDescriptorFactory elementDescriptorFactory;
         readonly InjectionClassBuilder classBuilder;
 
+        HashMap<StyleExtensionMapEntry> extensionsToBeApplied;
+        //An entry element is the first real element we foind in this particular DomWalker instance
+        HtmlElement entryElement;
+
         private void investigateLinkElement(HtmlLinkElement element) {
             if (styleExtensionManager.parsingNeeded( element )) {
                 styleExtensionManager.parseAndReleaseLinkElement(element);
+                //we must rebuild our stylemanager cache if we find a style sheet in this walk. Do so from our entryElement
+                extensionsToBeApplied = styleExtensionManager.getExtensionsForFragment(entryElement);
             }
         }
 
@@ -52,7 +59,7 @@ namespace randori.dom {
                 element.removeAttribute("id");
             }
 
-            var elementDescriptor = elementDescriptorFactory.describeElement( element );
+            var elementDescriptor = elementDescriptorFactory.describeElement(element, extensionsToBeApplied);
 
             if (elementDescriptor.context != null) {
                 //change the class builder for everything under this point in the DOM
@@ -93,6 +100,12 @@ namespace randori.dom {
 
             if (node.nodeType == Node.ELEMENT_NODE) {
 
+                if (extensionsToBeApplied == null) {
+                    //We build our extension cache from the first element we find
+                    entryElement = node.As<HtmlElement>();
+                    extensionsToBeApplied = styleExtensionManager.getExtensionsForFragment(entryElement);
+                }
+
                 //Just an optimization, need to create constants for all of these things
                 if (node.nodeName == "SCRIPT" || node.nodeName == "META") {
                     return;
@@ -115,6 +128,13 @@ namespace randori.dom {
         public void walkChildren(Node parentNode, AbstractBehavior parentBehavior = null) {
             var node = parentNode.firstChild;
 
+            //The fact that we have two entry point into here walkChildren and walkDomFragment continues to screw us
+            if (extensionsToBeApplied == null && (parentNode.nodeType == Node.ELEMENT_NODE)) {
+                //We build our extension cache from the first element we find
+                entryElement = parentNode.As<HtmlElement>();
+                extensionsToBeApplied = styleExtensionManager.getExtensionsForFragment(entryElement);
+            }
+
             while (node != null) {
                 investigateNode(node, parentBehavior);
                 node = node.nextSibling;
@@ -122,6 +142,7 @@ namespace randori.dom {
         }
 
         public void walkDomFragment(Node node, AbstractBehavior parentBehavior = null) {
+
             investigateNode(node, parentBehavior);
         }
 

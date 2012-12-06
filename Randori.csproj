@@ -51,6 +51,7 @@
     <Compile Include="content\ContentResolver.cs" />
     <Compile Include="content\ContentLoader.cs" />
     <Compile Include="content\ContentParser.cs" />
+    <Compile Include="data\Hashmap.cs" />
     <Compile Include="dom\DomExtensionFactory.cs" />
     <Compile Include="dom\DomWalker.cs" />
     <Compile Include="dom\ElementDescriptorFactory.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="startup\RandoriApplication.cs" />
     <Compile Include="startup\RandoriModule.cs" />
     <Compile Include="styles\StyleExtensionManager.cs" />
-    <Compile Include="styles\StyleBehaviorMap.cs" />
+    <Compile Include="styles\StyleExtensionMap.cs" />
     <Compile Include="styles\StyleExtensionMapEntry.cs" />
     <Compile Include="template\TemplateBuilder.cs" />
     <Compile Include="timer\Timer.cs" />

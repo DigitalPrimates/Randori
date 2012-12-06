@@ -21,30 +21,40 @@ using SharpKit.JavaScript;
 
 namespace randori.styles {
 
-    public class StyleBehaviorMap  {
+    public class StyleExtensionMap  {
 
         public JsObject<StyleExtensionMapEntry> hashMap;
 
-        public void addBehaviorEntry(JsString cssClassName, JsString behaviorType, JsString className ) {
-            StyleExtensionMapEntry attributes = hashMap[cssClassName];
+        public void addCSSEntry(JsString cssSelector, JsString extensionType, JsString extensionValue ) {
+            StyleExtensionMapEntry attributes = hashMap[cssSelector];
 
             if (attributes == null) {
                 attributes = new StyleExtensionMapEntry();
-                hashMap[cssClassName] = attributes;
+                hashMap[cssSelector] = attributes;
             }
 
-            attributes.addExtensionType(behaviorType, className);
+            attributes.addExtensionType(extensionType, extensionValue);
         }
 
-        public bool hasBehaviorEntry(JsString className) {
-            return (hashMap[className] != null);
+        public bool hasBehaviorEntry(JsString cssSelector) {
+            return (hashMap[cssSelector] != null);
         }
 
-        public StyleExtensionMapEntry getBehaviorEntry(JsString cssClassName) {
-            return hashMap[cssClassName];
+        public StyleExtensionMapEntry getExtensionEntry(JsString cssSelector) {
+            return hashMap[cssSelector];
         }
 
-        public StyleBehaviorMap() {
+        public JsArray<JsString> getAllRandoriSelectorEntries() {
+            var allEntries = new JsArray<JsString>();
+
+            foreach (var cssSelector in hashMap) {
+                allEntries.push(cssSelector);
+            }
+
+            return allEntries;
+        }
+
+        public StyleExtensionMap() {
             hashMap = new JsObject<StyleExtensionMapEntry>();
         }
     }

@@ -24,7 +24,7 @@ namespace randori.content {
 
     public class ContentResolver {
 
-        private StyleBehaviorMap map;
+        private StyleExtensionMap map;
 
         public void resolveContent(HtmlElement element) {
             var content = element.getAttribute("data-content");
@@ -33,13 +33,13 @@ namespace randori.content {
             element.removeAttribute("data-content");
 
             if (content == null) {
-                //content = map.getExtensionClass("content");
+                //content = map.getExtensionValue("content");
             }
 
             //load the content
         }
 
-        public ContentResolver(StyleBehaviorMap map) {
+        public ContentResolver(StyleExtensionMap map) {
             this.map = map;
         }
     }
