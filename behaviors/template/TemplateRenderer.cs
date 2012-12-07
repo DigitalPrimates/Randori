@@ -57,7 +57,7 @@ namespace randori.behaviors.template {
             //which is really important during templating
             var newNode = templateBuilder.renderTemplateClone(data);
             rootNode.html(newNode.html());
-            domWalker.walkChildren(decoratedElement, this);
+            domWalker.walkDomChildren(decoratedElement, this);
         }
 
         protected override void onRegister() {

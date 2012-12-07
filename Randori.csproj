@@ -51,7 +51,7 @@
     <Compile Include="content\ContentResolver.cs" />
     <Compile Include="content\ContentLoader.cs" />
     <Compile Include="content\ContentParser.cs" />
-    <Compile Include="data\Hashmap.cs" />
+    <Compile Include="data\HashMap.cs" />
     <Compile Include="dom\DomExtensionFactory.cs" />
     <Compile Include="dom\DomWalker.cs" />
     <Compile Include="dom\ElementDescriptorFactory.cs" />
@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="loader\" />
+    <Folder Include="service\serializer\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RandoriGuiceJS\RandoriGuiceJS.csproj">

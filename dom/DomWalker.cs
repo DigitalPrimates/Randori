@@ -125,10 +125,9 @@ namespace randori.dom {
             }
         }
 
-        public void walkChildren(Node parentNode, AbstractBehavior parentBehavior = null) {
+        private void walkChildren(Node parentNode, AbstractBehavior parentBehavior = null) {
             var node = parentNode.firstChild;
 
-            //The fact that we have two entry point into here walkChildren and walkDomFragment continues to screw us
             if (extensionsToBeApplied == null && (parentNode.nodeType == Node.ELEMENT_NODE)) {
                 //We build our extension cache from the first element we find
                 entryElement = parentNode.As<HtmlElement>();
@@ -141,9 +140,20 @@ namespace randori.dom {
             }
         }
 
+        public void walkDomChildren(Node parentNode, AbstractBehavior parentBehavior = null) {
+            //The fact that we have two entry point into here walkChildren and walkDomFragment continues to screw us
+            walkChildren(parentNode, parentBehavior);
+
+            //free this for GC when we are done, it has references to a lot of DOM elements
+            this.extensionsToBeApplied = null;
+        }
+
         public void walkDomFragment(Node node, AbstractBehavior parentBehavior = null) {
 
             investigateNode(node, parentBehavior);
+
+            //free this for GC when we are done, it has references to a lot of DOM elements
+            this.extensionsToBeApplied = null;
         }
 
         public DomWalker(DomExtensionFactory domExtensionFactory, InjectionClassBuilder classBuilder, ElementDescriptorFactory elementDescriptorFactory, StyleExtensionManager styleExtensionManager, LocalizationProvider localizationProvider) {
