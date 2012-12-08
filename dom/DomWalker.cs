@@ -34,7 +34,7 @@ namespace randori.dom {
         readonly LocalizationProvider localizationProvider;
         readonly DomExtensionFactory domExtensionFactory;
         readonly ElementDescriptorFactory elementDescriptorFactory;
-        readonly InjectionClassBuilder classBuilder;
+        InjectionClassBuilder classBuilder;
 
         HashMap<StyleExtensionMapEntry> extensionsToBeApplied;
         //An entry element is the first real element we foind in this particular DomWalker instance
@@ -63,9 +63,9 @@ namespace randori.dom {
 
             if (elementDescriptor.context != null) {
                 //change the class builder for everything under this point in the DOM
-                var newClassBuilder = domExtensionFactory.buildChildClassBuilder(classBuilder, element, elementDescriptor.context);
+                classBuilder = domExtensionFactory.buildChildClassBuilder(classBuilder, element, elementDescriptor.context);
                 //change the domWalker for everything under this point in the DOM
-                domWalker = (DomWalker)newClassBuilder.buildClass("randori.dom.DomWalker");
+                domWalker = (DomWalker)classBuilder.buildClass("randori.dom.DomWalker");
             }
 
             if (elementDescriptor.behavior != null) {
