@@ -28,6 +28,8 @@ namespace randori.template {
     public class TemplateBuilder {
         JsString templateAsString;
 
+        public bool validTemplate = false;
+
         //We need to both parse it and remove it... if we dont then any behaviors setup on the template
         //will be created on the older nodes by the DomWalker. That is a problem
 
@@ -35,6 +37,7 @@ namespace randori.template {
         public void captureAndEmptyTemplateContents(jQuery rootTemplateNode) {
             templateAsString = rootTemplateNode.html();
             jQueryContext.J( rootTemplateNode ).empty();
+            validTemplate = true;
         }
 
         private JsString returnFieldName( JsString token ) {
