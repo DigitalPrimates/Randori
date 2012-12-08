@@ -27,9 +27,10 @@ using randori.dom;
 namespace randori.behaviors {
     [JsType(JsMode.Prototype, OmitCasts = true, NativeOverloads = false)]
     public class ViewStack : AbstractBehavior {
-        readonly ViewChangeAnimator viewChangeAnimator;
         readonly ContentLoader contentLoader;
+        readonly ContentParser contentParser;
         readonly DomWalker domWalker;
+        readonly ViewChangeAnimator viewChangeAnimator;
 
         private JsString _currentView;
         private JsObject<jQuery> views;
@@ -42,7 +43,7 @@ namespace randori.behaviors {
 
         public void addView(JsString url) {
             //this is one point that I conced we should consider making async
-            var content = contentLoader.synchronousLoad(url);
+            var content = contentParser.parse(contentLoader.synchronousFragmentLoad(url));
             var div = new HtmlDivElement();
             var fragment = jQueryContext.J(div);
             fragment.hide();
@@ -110,8 +111,9 @@ namespace randori.behaviors {
             rootElement.empty();
         }
 
-        public ViewStack(ContentLoader contentLoader, DomWalker domWalker, ViewChangeAnimator viewChangeAnimator) {
+        public ViewStack(ContentLoader contentLoader, ContentParser contentParser, DomWalker domWalker, ViewChangeAnimator viewChangeAnimator) {
             this.contentLoader = contentLoader;
+            this.contentParser = contentParser;
             this.viewChangeAnimator = viewChangeAnimator;
             this.domWalker = domWalker;
         }

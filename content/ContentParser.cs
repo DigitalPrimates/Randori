@@ -21,6 +21,12 @@ using SharpKit.JavaScript;
 
 namespace randori.content {
 
-    class ContentParser {
+    public class ContentParser {
+        public JsString parse( JsString content ) {
+            //We need to get rid of the body element and maybe choose to do away with other things like script
+            var bodyRegex = new JsRegExp(@"(</?)body", "gi");
+            var sanitizedContent = content.replace(bodyRegex,"$1div");
+            return sanitizedContent;
+        }
     }
 }

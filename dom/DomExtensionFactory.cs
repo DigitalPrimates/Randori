@@ -35,7 +35,7 @@ namespace randori.dom {
         }
 
         public void buildNewContent(HtmlElement element, JsString fragmentURL) {
-            jQueryContext.J(element).append(contentLoader.synchronousLoad(fragmentURL));
+            jQueryContext.J(element).append(contentLoader.synchronousFragmentLoad(fragmentURL));
         }
 
         public InjectionClassBuilder buildChildClassBuilder(InjectionClassBuilder classBuilder, HtmlElement element, JsString contextClassName) {
