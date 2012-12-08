@@ -30,13 +30,15 @@ namespace randori.behaviors {
         protected JsObject<object> viableInjectionPoints;
         protected HtmlElement decoratedElement;
 
-        //This highlights the need for some type of decorator more than an extension methodolofy for something becoming a behavior
+        //This highlights the need for some type of decorator more than an extension methodology for something becoming a behavior
         public void hide() {
+            jQueryContext.J(decoratedElement).hide();
             //rootElement.hide();
         }
 
         public void show() {
             //rootElement.show();
+            jQueryContext.J(decoratedElement).show();
         }
 
         protected object getViewElementByID( JsString id ) {
