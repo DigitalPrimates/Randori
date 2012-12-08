@@ -38,6 +38,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="behaviors\List.cs" />
+    <Compile Include="behaviors\SimpleList.cs" />
     <Compile Include="bus\AbstractEventBus.cs" />
     <Compile Include="attributes\HtmlMergedFile.cs" />
     <Compile Include="attributes\Inject.cs" />
