@@ -11,14 +11,6 @@ namespace randori.behaviors {
     public class List : SimpleList {
         public ListChangeDelegate listChanged;
 
-        //TODO remove me when ben fixes plugin
-        [View(required = false)]
-        private jQuery template;
-
-        //TODO remove me when ben fixes plugin
-        [Inject]
-        public TemplateBuilder templateBuilder1;
-
         public object selectedItem {
             get { return _data[_selectedIndex]; }
             set {
@@ -51,9 +43,6 @@ namespace randori.behaviors {
         }
 
         protected override void onRegister() {
-            //TODO remove me when ben fixes plugin
-            this.templateBuilder = templateBuilder1;
-
             base.onRegister();
 
             //adds a listener to the root element

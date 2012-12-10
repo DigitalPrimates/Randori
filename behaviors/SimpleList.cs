@@ -14,9 +14,8 @@ namespace randori.behaviors {
 
         protected jQuery rootElement;
 
-        //TODO change me to public when ben fixes plugin
         [View(required = false)]
-        private jQuery template;
+        public jQuery template;
 
         [Inject]
         public TemplateBuilder templateBuilder;
