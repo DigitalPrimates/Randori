@@ -24,7 +24,6 @@ namespace randori.content {
 
     public class ContentLoader {
         readonly ContentCache contentCache;
-        readonly ContentParser parser;
 
         public JsString synchronousFragmentLoad(JsString fragmentURL) {
             //We need to check to see if we already have this content. If we do not, then we need to load it now and insert it into the DOM

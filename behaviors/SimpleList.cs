@@ -15,6 +15,9 @@ namespace randori.behaviors {
 
         protected jQuery rootElement;
 
+        public jQuery TEST;
+
+
         [View(required = false)]
         public jQuery template;
 
