@@ -2,6 +2,7 @@ using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using randori.attributes;
+using randori.dom;
 using randori.template;
 
 namespace randori.behaviors {
@@ -27,7 +28,9 @@ namespace randori.behaviors {
         }
 
         protected JsArray _data = new JsArray();
-        public JsArray data {
+	    DomWalker domWalker;
+
+	    public JsArray data {
             get { return _data; }
             set {
                 _data = value;
@@ -48,13 +51,15 @@ namespace randori.behaviors {
             if (templateBuilder.validTemplate) {
                 for (int i = 0; i < data.length; i++) {
                     row = templateBuilder.renderTemplateClone(data[i].As<JsObject>()).children();
-                    row.addClass("randoriListItem");
+					domWalker.walkDomFragment(row[0], this);
+					row.addClass("randoriListItem");
                     div.append(row);
                 }
             } else if (renderFunction != null) {
                 for (int i = 0; i < data.length; i++) {
                     row = renderFunction(i, data[i].As<JsObject>());
-                    row.addClass("randoriListItem");
+					domWalker.walkDomFragment(row[0], this);
+					row.addClass("randoriListItem");
                     div.append(row);
                 }
             }
@@ -63,15 +68,16 @@ namespace randori.behaviors {
             rootElement.append(div.children());
         }
 
-        protected override void onRegister() {
-            this.rootElement = jQueryContext.J(decoratedElement);
+		protected override void onPreRegister()
+		{
+			base.onPreRegister();
 
-            if (template != null) {
-                var fragment = jQueryContext.J("<div></div>");
-                template.remove();
-                fragment.append(template);
-                templateBuilder.captureAndEmptyTemplateContents(fragment);
-            }
+			this.rootElement = jQueryContext.J(decoratedElement);
+			templateBuilder.captureAndEmptyTemplateContents(rootElement);
+		}
+		
+		protected override void onRegister()
+		{
             //adds a listener to the root element
             //fires click whenever a .listItem is clicked
             renderList();
@@ -89,8 +95,9 @@ namespace randori.behaviors {
             rootElement.html(output);
         }
 
-        public SimpleList()
+		public SimpleList(DomWalker domWalker)
             : base() {
-        }
+				this.domWalker = domWalker;
+		}
     }
 }

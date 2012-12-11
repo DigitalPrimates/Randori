@@ -1,6 +1,7 @@
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using randori.attributes;
+using randori.dom;
 using randori.template;
 
 namespace randori.behaviors {
@@ -61,8 +62,9 @@ namespace randori.behaviors {
             selectedIndex = index;
         }
 
-        public List()
-            : base() {
+		public List(DomWalker domWalker)
+			: base(domWalker)
+		{
         }
     }
 }

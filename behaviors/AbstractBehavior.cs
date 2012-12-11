@@ -59,7 +59,8 @@ namespace randori.behaviors {
         public void injectPotentialNode( JsString id, object node) {
             //if we ever want to throw an error because of a duplicate id injection, this is the place to do it
             //right now first one in wins
-            if (viableInjectionPoints[id] != null) {
+			if ((viableInjectionPoints != null ) && (viableInjectionPoints[id] != null))
+			{
                 JsContext.delete( viableInjectionPoints[ id ] );
                 dynamic instance = this;
                 instance[ id ] = node;

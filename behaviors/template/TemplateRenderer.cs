@@ -30,7 +30,6 @@ namespace randori.behaviors.template {
 
         jQuery rootNode;
         readonly DomWalker domWalker;
-        readonly InjectionClassBuilder classBuilder;
         readonly TemplateBuilder templateBuilder;
 
         protected JsObject _data;
@@ -63,9 +62,8 @@ namespace randori.behaviors.template {
         protected override void onRegister() {
         }
 
-        public TemplateRenderer(InjectionClassBuilder classBuilder, DomWalker domWalker, TemplateBuilder templateBuilder) {
+        public TemplateRenderer(DomWalker domWalker, TemplateBuilder templateBuilder) {
             this.domWalker = domWalker;
-            this.classBuilder = classBuilder;
             this.templateBuilder = templateBuilder;
         }
     }
