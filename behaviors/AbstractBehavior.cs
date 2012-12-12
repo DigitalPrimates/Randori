@@ -56,7 +56,7 @@ namespace randori.behaviors {
 
         protected abstract void onRegister();
 
-        public void injectPotentialNode( JsString id, object node) {
+        public virtual void injectPotentialNode( JsString id, object node) {
             //if we ever want to throw an error because of a duplicate id injection, this is the place to do it
             //right now first one in wins
 			if ((viableInjectionPoints != null ) && (viableInjectionPoints[id] != null))

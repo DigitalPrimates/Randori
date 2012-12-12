@@ -2,6 +2,7 @@ using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using randori.attributes;
+using randori.behaviors.list;
 using randori.dom;
 using randori.template;
 
@@ -14,9 +15,6 @@ namespace randori.behaviors {
     public class SimpleList : AbstractBehavior {
 
         protected jQuery rootElement;
-
-        public jQuery TEST;
-
 
         [View(required = false)]
         public jQuery template;
@@ -53,8 +51,9 @@ namespace randori.behaviors {
 
             if (templateBuilder.validTemplate) {
                 for (int i = 0; i < data.length; i++) {
+	                var drp = new DataRendererProvider( data[ i ] );
                     row = templateBuilder.renderTemplateClone(data[i].As<JsObject>()).children();
-					domWalker.walkDomFragment(row[0], this);
+					domWalker.walkDomFragment(row[0], drp);
 					row.addClass("randoriListItem");
                     div.append(row);
                 }
