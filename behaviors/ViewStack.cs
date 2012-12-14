@@ -34,6 +34,7 @@ namespace randori.behaviors {
 
         private JsString _currentView;
         private JsObject<jQuery> views;
+		private JsObject<AbstractMediator> mediators;
 
         private jQuery rootElement;
 
@@ -41,7 +42,11 @@ namespace randori.behaviors {
             return false;
         }
 
-        public void addView(JsString url) {
+	    public void addView(JsString url) {
+			addView(url, null);
+	    }
+
+	    public void addView(JsString url, object viewData) {
             //this is one point that I conced we should consider making async
             var content = contentParser.parse(contentLoader.synchronousFragmentLoad(url));
             var div = new HtmlDivElement();
@@ -54,12 +59,14 @@ namespace randori.behaviors {
             fragment.css("top", "0");
             fragment.css("left", "0");
 
-            domWalker.walkDomFragment(div);
+		    var mediatorCapturer = new MediatorCapturer();
+			domWalker.walkDomFragment(div, mediatorCapturer);
 
             rootElement.append(div);
             views[url] = fragment;
+			mediators[url] = mediatorCapturer.mediator;
 
-            selectView( url );
+            selectView( url, viewData );
         }
 
         public void removeView(JsString url) {
@@ -81,7 +88,12 @@ namespace randori.behaviors {
             }
         }
 
-        public void selectView(JsString url) {
+	    public void selectView(JsString url) {
+			selectView(url, null);
+	    }
+		
+	    public void selectView(JsString url, object viewData) {
+
             if ( _currentView != url ) {
                 var oldFragment = views[_currentView];
                 var fragment = views[url];
@@ -95,6 +107,12 @@ namespace randori.behaviors {
                 }
 
                 _currentView = url;
+
+				var mediator = mediators[url];
+				if (mediator != null) {
+					mediator.setViewData(viewData);
+				}
+
                 fragment.show();
             } 
         }
@@ -105,6 +123,7 @@ namespace randori.behaviors {
 
         protected override void onRegister() {
             views = new JsObject<jQuery>();
+			mediators = new JsObject<AbstractMediator>();
 
             //We may eventually want to look for existing elements and hold onto them... not today
             rootElement = jQueryContext.J(decoratedElement);

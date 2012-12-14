@@ -42,6 +42,7 @@
     <Compile Include="behaviors\List.cs" />
     <Compile Include="behaviors\list\DataRendererProvider.cs" />
     <Compile Include="behaviors\SimpleList.cs" />
+    <Compile Include="behaviors\viewStack\MediatorCapturer.cs" />
     <Compile Include="bus\AbstractEventBus.cs" />
     <Compile Include="attributes\HtmlMergedFile.cs" />
     <Compile Include="attributes\Inject.cs" />

@@ -71,12 +71,13 @@ namespace randori.dom {
             if (elementDescriptor.behavior != null) {
                 //build a context for this behavior IF it turns out that this particular element defines one
                 currentBehavior = domExtensionFactory.buildBehavior( classBuilder, element, elementDescriptor.behavior );
+				
+				//we have a new behavior, this effectively causes us to use a new context for the nodes below it
+				//Make sure we add ourselves to our parent though
+				if (parentBehavior != null) {
+					parentBehavior.injectPotentialNode(id, currentBehavior);
+				}
 
-                //we have a new behavior, this effectively causes us to use a new context for the nodes below it
-                //Make sure we add ourselves to our parent though
-                if (id != null && parentBehavior != null) {
-                    parentBehavior.injectPotentialNode(id, currentBehavior);
-                }
             } else {
                 if (id != null && currentBehavior != null) {
                     currentBehavior.injectPotentialNode(id, jQueryContext.J(element));

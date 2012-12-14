@@ -23,6 +23,9 @@ using SharpKit.jQuery;
 namespace randori.behaviors {
     /** just a stub for now. Destined for many better things **/
     public abstract class AbstractMediator : AbstractBehavior {
+
+	    public abstract void setViewData( object viewData );
+
         public AbstractMediator() {
         }
     }
