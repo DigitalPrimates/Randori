@@ -21,16 +21,31 @@ using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
 using guice;
+using guice.resolver;
 using randori.behaviors;
 using randori.content;
 
 namespace randori.dom {
     public class DomExtensionFactory {
         readonly ContentLoader contentLoader;
+        private ClassResolver classResolver;
+        private ExternalBehaviorFactory externalBehaviorFactory;
 
         public AbstractBehavior buildBehavior(InjectionClassBuilder classBuilder, HtmlElement element, JsString behaviorClassName ) {
-            var behavior = (AbstractBehavior)classBuilder.buildClass(behaviorClassName);
-            behavior.provideDecoratedElement(element);
+            AbstractBehavior behavior = null;
+
+            var resolution = classResolver.resolveClassName(behaviorClassName);
+            
+            if ( resolution.builtIn ) {
+                /** If we have a type which was not created via Randori, we send it out to get created. In this way
+                 * we dont worry about injection data and we allow for any crazy creation mechanism the client can
+                 * consider **/
+                behavior = externalBehaviorFactory.createExternalBehavior(element, behaviorClassName, resolution.type);
+            } else {
+                behavior = (AbstractBehavior)classBuilder.buildClass(behaviorClassName);
+                behavior.provideDecoratedElement(element);
+            }
+
             return behavior;
         }
 
@@ -48,8 +63,10 @@ namespace randori.dom {
             return (InjectionClassBuilder)injector.getInstance(typeof(InjectionClassBuilder));
         }
 
-        public DomExtensionFactory( ContentLoader contentLoader ) {
+        public DomExtensionFactory( ContentLoader contentLoader, ClassResolver classResolver, ExternalBehaviorFactory externalBehaviorFactory ) {
             this.contentLoader = contentLoader;
+            this.classResolver = classResolver;
+            this.externalBehaviorFactory = externalBehaviorFactory;
         }
     }
 }
