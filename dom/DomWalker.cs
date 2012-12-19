@@ -107,8 +107,8 @@ namespace randori.dom {
                     extensionsToBeApplied = styleExtensionManager.getExtensionsForFragment(entryElement);
                 }
 
-                //Just an optimization, need to create constants for all of these things
-                if (node.nodeName == "SCRIPT" || node.nodeName == "META") {
+                //Just an optimization, need to create constants for all of these things.... removed as kendo uses script nodes for templates node.nodeName == "SCRIPT" || 
+                if (node.nodeName == "META") {
                     return;
                 }
 
