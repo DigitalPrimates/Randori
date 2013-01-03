@@ -19,7 +19,7 @@
 
 namespace randori.service.serializer {
     public abstract class AbstractParser {
-        public ParserToken createToken(ServiceToken serviceToken) {
+        public ParserToken createToken(AbstractToken serviceToken) {
             var parserToken = new ParserToken();
 
             //Parse the result of the service before notifying the listener

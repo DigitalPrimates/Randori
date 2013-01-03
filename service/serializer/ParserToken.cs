@@ -31,7 +31,9 @@ namespace randori.service.serializer {
         public void serviceFault(string fault) {
             if (this.fault != null) {
                 this.fault(fault);
-            }    
+            } else {
+                throw new JsError("Service Error");
+            }
         }
     }
 }

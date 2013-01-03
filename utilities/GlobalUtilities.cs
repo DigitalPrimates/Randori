@@ -16,29 +16,13 @@
  * 
  * @author Michael Labriola <labriola@digitalprimates.net>
  */
-using SharpKit.Html;
 using SharpKit.JavaScript;
 
-namespace randori.service {
-
-    public class ServiceToken : AbstractToken {
-
-        public void onReadyStateChange(DOMEvent evt) {
-            var request = evt.target.As<XMLHttpRequest>();
-
-            if (request.readyState == XMLHttpRequest.DONE) {
-                if (request.status == 200) {
-                    if (result != null) {
-                        result(request.responseText);
-                    }
-                } else {
-                    if ( fault != null ) {
-                        fault( request.statusText );
-                    } else {
-                        throw new JsError("Service Error");
-                    }
-                }
-            }
+namespace randori.js {
+    [JsType(JsMode.Global)]
+    public class GlobalUtilities {
+        public static object Typeof(object val) {
+            return val;
         }
     }
 }
