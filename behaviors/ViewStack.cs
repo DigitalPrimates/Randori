@@ -39,34 +39,40 @@ namespace randori.behaviors {
         private jQuery rootElement;
 
         public bool hasView(JsString url) {
-            return false;
+            return (views[url] != null);
         }
 
 	    public void addView(JsString url) {
-			addView(url, null);
+            if (hasView(url)) {
+                selectView( url );
+            } else {
+                addView(url, null);
+            }
 	    }
 
 	    public void addView(JsString url, object viewData) {
-            //this is one point that I conced we should consider making async
-            var content = contentParser.parse(contentLoader.synchronousFragmentLoad(url));
-            var div = new HtmlDivElement();
-            var fragment = jQueryContext.J(div);
-            fragment.hide();
-            fragment.html(content);
-            fragment.css("width", "100%");
-            fragment.css("height", "100%");
-            fragment.css("position", "absolute");
-            fragment.css("top", "0");
-            fragment.css("left", "0");
+            if (!hasView(url)) {
+                //this is one point that I conced we should consider making async
+                var content = contentParser.parse( contentLoader.synchronousFragmentLoad( url ) );
+                var div = new HtmlDivElement();
+                var fragment = jQueryContext.J( div );
+                fragment.hide();
+                fragment.html( content );
+                fragment.css( "width", "100%" );
+                fragment.css( "height", "100%" );
+                fragment.css( "position", "absolute" );
+                fragment.css( "top", "0" );
+                fragment.css( "left", "0" );
 
-		    var mediatorCapturer = new MediatorCapturer();
-			domWalker.walkDomFragment(div, mediatorCapturer);
+                var mediatorCapturer = new MediatorCapturer();
+                domWalker.walkDomFragment( div, mediatorCapturer );
 
-            rootElement.append(div);
-            views[url] = fragment;
-			mediators[url] = mediatorCapturer.mediator;
+                rootElement.append( div );
+                views[ url ] = fragment;
+                mediators[ url ] = mediatorCapturer.mediator;
+            }
 
-            selectView( url, viewData );
+	        selectView( url, viewData );
         }
 
         public void removeView(JsString url) {
