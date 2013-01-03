@@ -21,13 +21,13 @@ using SharpKit.JavaScript;
 
 namespace randori.service {
     [JsType(JsMode.Prototype, Export = false)]
-    public delegate void ServiceResult(object result);
+    public delegate void ServiceResult<T>(T result);
 
     [JsType(JsMode.Prototype, Export = false)]
     public delegate void ServiceFault(string fault);
 
-    public abstract class AbstractToken {
-        public ServiceResult result;
+    public abstract class AbstractToken<T> {
+        public ServiceResult<T> result;
         public ServiceFault fault;
     }
 }

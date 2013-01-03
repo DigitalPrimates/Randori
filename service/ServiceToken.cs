@@ -21,7 +21,7 @@ using SharpKit.JavaScript;
 
 namespace randori.service {
 
-    public class ServiceToken : AbstractToken {
+    public class ServiceToken<T> : AbstractToken<T> {
 
         public void onReadyStateChange(DOMEvent evt) {
             var request = evt.target.As<XMLHttpRequest>();
@@ -29,7 +29,7 @@ namespace randori.service {
             if (request.readyState == XMLHttpRequest.DONE) {
                 if (request.status == 200) {
                     if (result != null) {
-                        result(request.responseText);
+                        result(request.responseText.As<T>());
                     }
                 } else {
                     if ( fault != null ) {

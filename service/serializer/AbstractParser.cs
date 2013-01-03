@@ -18,13 +18,13 @@
  */
 
 namespace randori.service.serializer {
-    public abstract class AbstractParser {
-        public ParserToken createToken(AbstractToken serviceToken) {
-            var parserToken = new ParserToken();
+    public abstract class AbstractParser<T> {
+        public ParserToken<T> createToken(AbstractToken<object> serviceToken) {
+            var parserToken = new ParserToken<T>();
 
             //Parse the result of the service before notifying the listener
             //eventually we need to handle an error during parsing becoming a fault
-            serviceToken.result = delegate( object result ) {
+            serviceToken.result = delegate(object result) {
                 parserToken.serviceResult(parseResult(result));
             };
 
@@ -33,6 +33,6 @@ namespace randori.service.serializer {
             return parserToken;
         }
 
-        protected abstract object parseResult( object result );
+        protected abstract T parseResult( object result );
     }
 }

@@ -21,10 +21,10 @@ using SharpKit.Html;
 using SharpKit.JavaScript;
 
 namespace randori.service.serializer {
-    public class ParserToken : AbstractToken {
+    public class ParserToken<T> : AbstractToken<T> {
         public void serviceResult(object result) {
             if (this.result != null) {
-                this.result(result);
+                this.result(result.As<T>());
             }                
         }
 

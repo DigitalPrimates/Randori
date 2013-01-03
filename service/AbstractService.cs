@@ -32,9 +32,9 @@ namespace randori.service {
             return uri;
         }
 
-        protected AbstractToken sendRequest(string verb, string protocol, string host, string port, string path) {
+        protected AbstractToken<object> sendRequest(string verb, string protocol, string host, string port, string path) {
 
-            var serviceToken = new ServiceToken();
+            var serviceToken = new ServiceToken<object>();
 
             xmlHttpRequest.open(verb, createUri(protocol, host, port, path), true );
             xmlHttpRequest.onreadystatechange += serviceToken.onReadyStateChange;
