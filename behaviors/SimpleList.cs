@@ -14,8 +14,6 @@ namespace randori.behaviors {
     [JsType(JsMode.Prototype, NativeOverloads = false, OmitCasts = true)]
     public class SimpleList : AbstractBehavior {
 
-        protected jQuery rootElement;
-
         [View(required = false)]
         public jQuery template;
 
@@ -66,16 +64,15 @@ namespace randori.behaviors {
                 }
             }
 
-            rootElement.empty();
-            rootElement.append(div.children());
+            decoratedNode.empty();
+            decoratedNode.append(div.children());
         }
 
 		protected override void onPreRegister()
 		{
 			base.onPreRegister();
 
-			this.rootElement = jQueryContext.J(decoratedElement);
-			templateBuilder.captureAndEmptyTemplateContents(rootElement);
+            templateBuilder.captureAndEmptyTemplateContents(decoratedNode);
 		}
 		
 		protected override void onRegister()
@@ -88,13 +85,13 @@ namespace randori.behaviors {
         public void showLoading() {
             JsString output = "<div style=\"height:100%; width:100%;\"><div style=\"text-align:center;width:100%;top:60%;position:absolute\">Loading...</div></div>";
 
-            rootElement.html(output);
+            decoratedNode.html(output);
         }
 
         private void showNoResults(bool visible = true) {
             JsString output = "<div style=\"height:100%; width:100%;\"><div style=\"text-align:center;width:100%;top:60%;position:absolute\">No Items Found</div></div>";
 
-            rootElement.html(output);
+            decoratedNode.html(output);
         }
 
 		public SimpleList(DomWalker domWalker)

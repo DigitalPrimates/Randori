@@ -33,9 +33,9 @@ namespace randori.behaviors {
             get { return _selectedIndex; }
             set {
                 _selectedIndex = value;
-                rootElement.children().removeClass("selected");
-                if (value > -1 && value < rootElement.children().length) {
-                    rootElement.children().eq(value).addClass("selected");
+                decoratedNode.children().removeClass("selected");
+                if (value > -1 && value < decoratedNode.children().length) {
+                    decoratedNode.children().eq(value).addClass("selected");
                     if (listChanged != null) {
                         listChanged(value, data[value].As<JsObject>());
                     }
@@ -48,7 +48,7 @@ namespace randori.behaviors {
 
             //adds a listener to the root element
             //fires click whenever a .listItem is clicked
-            rootElement.@delegate(".randoriListItem", "click", onItemClick);
+            decoratedNode.@delegate(".randoriListItem", "click", onItemClick);
         }
 
         public override void renderList() {
@@ -57,8 +57,8 @@ namespace randori.behaviors {
         }
 
         protected void onItemClick(Event e) {
-            jQuery targetJQ = jQueryContext.J(e.currentTarget);
-            int index = targetJQ.index();
+            var targetJq = jQueryContext.J(e.currentTarget);
+            int index = targetJq.index();
             selectedIndex = index;
         }
 
