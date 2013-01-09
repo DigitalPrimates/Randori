@@ -22,6 +22,7 @@ using SharpKit.JavaScript;
 using randori.async;
 
 namespace randori.service {
+    [JsType(JsMode.Prototype, OmitCasts = true, NativeOverloads = false)]
     public abstract class AbstractService {
         readonly protected XMLHttpRequest xmlHttpRequest;
 
@@ -40,11 +41,14 @@ namespace randori.service {
             return uri;
         }
 
-        protected Promise<object> sendRequest(string verb, string protocol, string host, string port, string path) {
+        protected virtual void modifyHeaders( XMLHttpRequest request ) {
+            
+        }
 
+        protected virtual Promise<object> sendRequest( string verb, string uri ) {
             var promise = new Promise<object>();
 
-            xmlHttpRequest.open(verb, createUri(protocol, host, port, path), true );
+            xmlHttpRequest.open(verb, uri, true);
             xmlHttpRequest.onreadystatechange += delegate(DOMEvent evt) {
                 var request = evt.target.As<XMLHttpRequest>();
 
@@ -57,9 +61,15 @@ namespace randori.service {
                 }
             };
 
+            modifyHeaders(xmlHttpRequest);
+
             xmlHttpRequest.send("");
 
             return promise;
+        }
+
+        protected virtual Promise<object> sendRequest(string verb, string protocol, string host, string port, string path) {
+            return sendRequest( verb, createUri( protocol, host, port, path ) );
         }
 
         protected AbstractService( XMLHttpRequest xmlHttpRequest) {
