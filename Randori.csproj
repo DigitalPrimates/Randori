@@ -38,6 +38,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="async\Promise.cs" />
     <Compile Include="behaviors\AbstractRenderer.cs" />
     <Compile Include="behaviors\List.cs" />
     <Compile Include="behaviors\list\DataRendererProvider.cs" />
