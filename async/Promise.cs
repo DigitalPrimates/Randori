@@ -24,7 +24,7 @@ using SharpKit.jQuery;
 namespace randori.async {
 
     [JsType(JsMode.Prototype, Export = false)]
-    public delegate object OnFullfilledDelegate(object result);
+    public delegate object OnFullfilledDelegate<T>(T result);
 
     [JsType(JsMode.Prototype, Export = false)]
     public delegate object OnRejectedDelegate(object reason);
@@ -34,14 +34,14 @@ namespace randori.async {
     }
 
     [JsType(JsMode.Json, Export = false, Name = "Object")]
-    class ThenContract {
-        public OnFullfilledDelegate fullfilledHandler;
+    class ThenContract<T> {
+        public OnFullfilledDelegate<T> fullfilledHandler;
         public OnRejectedDelegate rejectedHandler;
         public Promise promise;
     }
 
     public class Promise {
-        readonly JsArray<ThenContract> thenContracts;
+        readonly JsArray<dynamic> thenContracts;
         PromiseState state = PromiseState.Pending;
 
         public object value;
@@ -52,7 +52,7 @@ namespace randori.async {
         }
 
         //3.2.1 Both onFulfilled and onRejected are optional arguments
-        public Promise then(OnFullfilledDelegate onFulfilled=null, OnRejectedDelegate onRejected=null) {
+        public Promise then<T>(OnFullfilledDelegate<T> onFulfilled=null, OnRejectedDelegate onRejected=null) {
             var promise = new Promise();
 
             //3.2.1.1
@@ -66,7 +66,7 @@ namespace randori.async {
             }
 
             //3.2.5
-            var thenContract = new ThenContract{fullfilledHandler = onFulfilled, rejectedHandler = onRejected, promise = promise};
+            var thenContract = new ThenContract<T>{fullfilledHandler = onFulfilled, rejectedHandler = onRejected, promise = promise};
             thenContracts.push( thenContract );
 
             if (state == PromiseState.Fullfilled) {
@@ -198,7 +198,7 @@ namespace randori.async {
         }
 
         public Promise() {
-            this.thenContracts = new JsArray<ThenContract>();
+            this.thenContracts = new JsArray<dynamic>();
         }
     }
 }
