@@ -28,6 +28,11 @@ namespace randori.async {
     [JsType(JsMode.Prototype, Export = false)]
     public delegate object OnRejectedDelegate(object reason);
 
+    [JsType(JsMode.Prototype, Export = false)]
+    public delegate void OnFullfilledNoReturnDelegate<T>(T result);
+
+    [JsType(JsMode.Prototype, Export = false)]
+    public delegate void OnRejectedNoReturnDelegate(object reason);
     enum PromiseState {
         Pending, Rejected, Fullfilled
     }

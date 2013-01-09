@@ -18,6 +18,8 @@
  */
 
 using SharpKit.Html;
+using SharpKit.JavaScript;
+using randori.async;
 
 namespace randori.service {
     public abstract class AbstractService {
@@ -32,16 +34,26 @@ namespace randori.service {
             return uri;
         }
 
-        protected AbstractToken<object> sendRequest(string verb, string protocol, string host, string port, string path) {
+        protected Promise<object> sendRequest(string verb, string protocol, string host, string port, string path) {
 
-            var serviceToken = new ServiceToken<object>();
+            var promise = new Promise<object>();
 
             xmlHttpRequest.open(verb, createUri(protocol, host, port, path), true );
-            xmlHttpRequest.onreadystatechange += serviceToken.onReadyStateChange;
+            xmlHttpRequest.onreadystatechange += delegate(DOMEvent evt) {
+                var request = evt.target.As<XMLHttpRequest>();
+
+                if (request.readyState == XMLHttpRequest.DONE) {
+                    if (request.status == 200) {
+                        promise.resolve(request.responseText);
+                    } else {
+                        promise.reject(request.statusText);
+                    }
+                }
+            };
 
             xmlHttpRequest.send("");
 
-            return serviceToken;
+            return promise;
         }
 
         protected AbstractService( XMLHttpRequest xmlHttpRequest) {

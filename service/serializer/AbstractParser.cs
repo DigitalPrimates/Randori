@@ -19,20 +19,5 @@
 
 namespace randori.service.serializer {
     public abstract class AbstractParser<T> {
-        public ParserToken<T> createToken(AbstractToken<object> serviceToken) {
-            var parserToken = new ParserToken<T>();
-
-            //Parse the result of the service before notifying the listener
-            //eventually we need to handle an error during parsing becoming a fault
-            serviceToken.result = delegate(object result) {
-                parserToken.serviceResult(parseResult(result));
-            };
-
-            //just pass the error straight through
-            serviceToken.fault = parserToken.serviceFault;
-            return parserToken;
-        }
-
-        protected abstract T parseResult( object result );
     }
 }
