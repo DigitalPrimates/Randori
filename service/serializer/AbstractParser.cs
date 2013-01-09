@@ -18,6 +18,6 @@
  */
 
 namespace randori.service.serializer {
-    public abstract class AbstractParser<T> {
+    public abstract class AbstractParser {
     }
 }
