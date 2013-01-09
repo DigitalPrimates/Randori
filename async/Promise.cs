@@ -19,7 +19,6 @@
 
 using SharpKit.Html;
 using SharpKit.JavaScript;
-using SharpKit.jQuery;
 
 namespace randori.async {
 
@@ -34,26 +33,30 @@ namespace randori.async {
     }
 
     [JsType(JsMode.Json, Export = false, Name = "Object")]
-    class ThenContract<T> {
+    class ThenContract<T,T1> {
         public OnFullfilledDelegate<T> fullfilledHandler;
         public OnRejectedDelegate rejectedHandler;
-        public Promise promise;
+        public Promise<T1> promise;
     }
 
-    public class Promise {
+    public class Promise<T> {
         readonly JsArray<dynamic> thenContracts;
         PromiseState state = PromiseState.Pending;
 
-        public object value;
+        public T value;
         public object reason;
 
         private bool isFunction( dynamic obj ) {
             return !!(obj && obj.constructor && obj.call && obj.apply);
         }
 
+        public Promise<object> then(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
+            return then<object>( onFulfilled, onRejected );
+        }
+
         //3.2.1 Both onFulfilled and onRejected are optional arguments
-        public Promise then<T>(OnFullfilledDelegate<T> onFulfilled=null, OnRejectedDelegate onRejected=null) {
-            var promise = new Promise();
+        public Promise<T1> then<T1>(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
+            var promise = new Promise<T1>();
 
             //3.2.1.1
             if (!isFunction(onFulfilled)) {
@@ -66,7 +69,7 @@ namespace randori.async {
             }
 
             //3.2.5
-            var thenContract = new ThenContract<T>{fullfilledHandler = onFulfilled, rejectedHandler = onRejected, promise = promise};
+            var thenContract = new ThenContract<T,T1>{fullfilledHandler = onFulfilled, rejectedHandler = onRejected, promise = promise};
             thenContracts.push( thenContract );
 
             if (state == PromiseState.Fullfilled) {
@@ -85,7 +88,7 @@ namespace randori.async {
             return promise;
         }
 
-        public void resolve(object response) {
+        public void resolve(T response) {
             //3.2.2 & 3.2.2.3
             if (state == PromiseState.Pending) {
 
@@ -96,7 +99,7 @@ namespace randori.async {
             }
         }
 
-        private void fullfill(object response) {
+        private void fullfill(T response) {
 
             //3.1.1.1
             state = PromiseState.Fullfilled;
@@ -113,9 +116,9 @@ namespace randori.async {
 
                         if ( callBackResult && callBackResult.then != null) {
                             //3.2.6.3
-                            Promise returnedPromise = callBackResult;
+                            Promise<T> returnedPromise = callBackResult;
                             returnedPromise.then(
-                                delegate(object innerResponse) {
+                                delegate(T innerResponse) {
                                     //3.2.6.3.2
                                     thenContract.promise.resolve(innerResponse);
                                     return null;
@@ -169,9 +172,9 @@ namespace randori.async {
 
                         if (callBackResult && callBackResult.then != null) {
                             //3.2.6.3
-                            Promise returnedPromise = callBackResult;
+                            Promise<T> returnedPromise = callBackResult.As<T>();
                             returnedPromise.then(
-                                delegate(object innerResponse) {
+                                delegate(T innerResponse) {
                                     //3.2.6.3.2
                                     thenContract.promise.resolve(innerResponse);
                                     return null;
