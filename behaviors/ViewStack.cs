@@ -20,6 +20,7 @@
 using SharpKit.Html;
 using SharpKit.JavaScript;
 using SharpKit.jQuery;
+using randori.async;
 using randori.behaviors.viewStack;
 using randori.content;
 using randori.dom;
@@ -32,95 +33,102 @@ namespace randori.behaviors {
         readonly DomWalker domWalker;
         readonly ViewChangeAnimator viewChangeAnimator;
 
-        private JsString _currentView;
-        private JsObject<jQuery> views;
+        private jQuery _currentView;
+        private JsArray<jQuery> viewFragmentStack;
 		private JsObject<AbstractMediator> mediators;
 
-        private jQuery rootElement;
-
         public bool hasView(JsString url) {
-            return (views[url] != null);
+            jQuery fragment = null;
+            var allFragments = decoratedNode.children();
+
+            if ( allFragments.length > 0 ) {
+                fragment = allFragments.find("[data-url='" + url + "']");    
+            }
+            
+            return ((fragment != null) && fragment.length>0);
         }
 
-	    public void addView(JsString url) {
-            if (hasView(url)) {
-                selectView( url );
-            } else {
-                addView(url, null);
-            }
-	    }
+        public Promise<AbstractMediator> pushView(JsString url ) {
+            Promise<AbstractMediator> promise;
 
-	    public void addView(JsString url, object viewData) {
-            if (!hasView(url)) {
-                //this is one point that I conced we should consider making async
-                var content = contentParser.parse( contentLoader.synchronousFragmentLoad( url ) );
-                var div = new HtmlDivElement();
-                var fragment = jQueryContext.J( div );
-                fragment.hide();
-                fragment.html( content );
-                fragment.css( "width", "100%" );
-                fragment.css( "height", "100%" );
-                fragment.css( "position", "absolute" );
-                fragment.css( "top", "0" );
-                fragment.css( "left", "0" );
+            var stack = this;
+            var div = new HtmlDivElement();
+            var fragment = jQueryContext.J(div);
+            fragment.hide();
+            fragment.css("width", "100%");
+            fragment.css("height", "100%");
+            fragment.css("position", "absolute");
+            fragment.css("top", "0");
+            fragment.css("left", "0");
+            fragment.data( "url", url ) ;
+
+            promise = contentLoader.asynchronousLoad(url).then<AbstractMediator>(delegate(string result) {
+                var content = contentParser.parse(result);
+
+                fragment.html(content);
+                decoratedNode.append(div);
 
                 var mediatorCapturer = new MediatorCapturer();
-                domWalker.walkDomFragment( div, mediatorCapturer );
+                domWalker.walkDomFragment(div, mediatorCapturer);
 
-                rootElement.append( div );
-                views[ url ] = fragment;
-                mediators[ url ] = mediatorCapturer.mediator;
-            }
+                viewFragmentStack.push(fragment);
+                var mediator = mediatorCapturer.mediator;
+                mediators[ url ] = mediator;
 
-	        selectView( url, viewData );
+                showView(_currentView, fragment);
+
+                return mediator;
+            } );
+
+            return promise;
         }
 
-        public void removeView(JsString url) {
+        public void popView() {
 
-            if (url == _currentView) {
-                //we must choose some view to be active now... catch a tiger by its toe...
-                //this is not recommended
+            var oldView = viewFragmentStack.pop();
+            if (oldView != null ) {
+                oldView.remove();
             }
 
-            var fragment = views[url];
-            fragment.remove();
-
-            JsContext.delete( views[url] );
+            _currentView = viewFragmentStack.pop();
+            if (_currentView != null) {
+                _currentView.show();
+            }
         }
 
-        public JsString currentView {
+        public JsString currentViewUrl {
             get {
-                return _currentView;
+                return ( (_currentView!=null)?_currentView.data("url").As<JsString>():null );
             }
         }
 
 	    public void selectView(JsString url) {
-			selectView(url, null);
-	    }
-		
-	    public void selectView(JsString url, object viewData) {
 
-            if ( _currentView != url ) {
-                var oldFragment = views[_currentView];
-                var fragment = views[url];
+            if (currentViewUrl != url) {
 
-                if (fragment == null ) {
+                var fragment = decoratedNode.children().filter("[data-url=" + url + "]");
+
+                if (fragment == null) {
                     throw new JsError("Unknown View");
                 }
 
-                if (oldFragment!= null) {
-                    oldFragment.hide();
-                }
+                fragment.detach();
+                decoratedNode.append( fragment );
 
-                _currentView = url;
+                showView( _currentView, fragment );
 
-				var mediator = mediators[url];
-				if (mediator != null) {
-					mediator.setViewData(viewData);
-				}
-
-                fragment.show();
+                _currentView = fragment;
             } 
+        }
+
+        private void showView(jQuery oldFragment, jQuery newFragment ) {
+            if (oldFragment != null) {
+                oldFragment.hide();
+            }
+
+            if (newFragment != null) {
+                newFragment.show();
+            }            
         }
 
         private jQuery transitionViews(jQuery arrivingView, jQuery departingView, object data = null) {
@@ -128,12 +136,10 @@ namespace randori.behaviors {
         }
 
         protected override void onRegister() {
-            views = new JsObject<jQuery>();
 			mediators = new JsObject<AbstractMediator>();
 
             //We may eventually want to look for existing elements and hold onto them... not today
-            rootElement = jQueryContext.J(decoratedElement);
-            rootElement.empty();
+            decoratedNode.empty();
         }
 
         public ViewStack(ContentLoader contentLoader, ContentParser contentParser, DomWalker domWalker, ViewChangeAnimator viewChangeAnimator) {
@@ -141,6 +147,8 @@ namespace randori.behaviors {
             this.contentParser = contentParser;
             this.viewChangeAnimator = viewChangeAnimator;
             this.domWalker = domWalker;
+
+            viewFragmentStack = new JsArray<jQuery>();
         }
     }
 }

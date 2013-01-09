@@ -19,6 +19,7 @@
 
 using SharpKit.Html;
 using SharpKit.JavaScript;
+using randori.async;
 
 namespace randori.content {
 
@@ -45,8 +46,27 @@ namespace randori.content {
             return request.responseText;
         }
 
-        public void asynchronousLoad() {
+        public Promise<string> asynchronousLoad(JsString fragmentURL) {
 
+            var promise = new Promise<string>();
+            var request = new XMLHttpRequest();
+
+            request.open("GET", fragmentURL, true);
+            request.onreadystatechange += delegate(DOMEvent evt) {
+                var r = evt.target.As<XMLHttpRequest>();
+
+                if (r.readyState == XMLHttpRequest.DONE) {
+                    if (r.status == 200) {
+                        promise.resolve(r.responseText);
+                    } else {
+                        promise.reject(r.statusText);
+                    }
+                }
+            };
+
+            request.send("");
+
+            return promise;
         }
 
         public ContentLoader( ContentCache contentCache ) {
