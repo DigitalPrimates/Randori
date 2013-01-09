@@ -19,8 +19,8 @@
 
 namespace randori.service {
     public class ServiceConfig {
-        public string protocol = "http";
-        public string host = "localhost";
+        public string protocol = null;
+        public string host = null;
         public string port = null;
         public bool debugMode = true;
     }

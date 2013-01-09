@@ -26,10 +26,16 @@ namespace randori.service {
         readonly protected XMLHttpRequest xmlHttpRequest;
 
         protected string createUri( string protocol, string host, string port, string path ) {
-            var uri = protocol + "://" + host;
+            var uri = "";
+            
+            if ( ( protocol != null ) && ( host != null ) ) {
+                uri += ( protocol + "://" + host );    
+            }
+            
             if ( port != null ) {
                 uri = uri + ":" + port;
             }
+
             uri = uri + "/" + path;
             return uri;
         }
