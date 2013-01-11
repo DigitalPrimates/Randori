@@ -90,9 +90,13 @@ namespace randori.behaviors {
                 oldView.remove();
             }
 
-            _currentView = viewFragmentStack.pop();
-            if (_currentView != null) {
-                _currentView.show();
+            if ( viewFragmentStack.length > 0 ) {
+                _currentView = viewFragmentStack[ viewFragmentStack.length - 1 ];
+                if ( _currentView != null ) {
+                    _currentView.show();
+                }
+            } else {
+                _currentView = null;
             }
         }
 
