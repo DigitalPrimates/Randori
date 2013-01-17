@@ -54,6 +54,12 @@ namespace randori.styles {
                 //Lets assume this is a class selector
                 while ( elements.length > 0 ) {
                     var element = elements.pop();
+                    //Check this element first
+                    if ( element.classList.contains( className ) ) {
+                        newElements.push( element );
+                    }
+
+                    //now its descendants
                     var nodes = element.getElementsByClassName( className );
                     for ( var j=0; j<nodes.length; j++) {
                         newElements.push( nodes[ j ].As<HtmlElement>() );
