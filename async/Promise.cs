@@ -54,8 +54,16 @@ namespace randori.async {
         private bool isFunction( dynamic obj ) {
             return !!(obj && obj.constructor && obj.call && obj.apply);
         }
+        /*** PLEASE KEEP THESE FUNCTIONS IN PRECISELY THIS ORDER, WE ARE RELYING ON OUTPUT ORDER ***/
+        public Promise<object> thenNr(OnFullfilledNoReturnDelegate<T> onFulfilled = null, OnRejectedNoReturnDelegate onRejected = null) {
+            return then<object>(onFulfilled.As<OnFullfilledDelegate<T>>(), onRejected.As<OnRejectedDelegate>());
+        }
 
-        public Promise<object> then(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
+        public Promise<T1> thenNr<T1>(OnFullfilledNoReturnDelegate<T> onFulfilled = null, OnRejectedNoReturnDelegate onRejected = null) {
+            return then<T1>(onFulfilled.As<OnFullfilledDelegate<T>>(), onRejected.As<OnRejectedDelegate>());
+        }
+
+        public Promise<object>then(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
             return then<object>( onFulfilled, onRejected );
         }
 
