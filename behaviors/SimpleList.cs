@@ -82,6 +82,11 @@ namespace randori.behaviors {
             renderList();
         }
 
+        protected override void onDeregister() {
+            this.data = null;
+            decoratedNode.empty();
+        }
+
         public void showLoading() {
             JsString output = "<div style=\"height:100%; width:100%;\"><div style=\"text-align:center;width:100%;top:60%;position:absolute\">Loading...</div></div>";
 

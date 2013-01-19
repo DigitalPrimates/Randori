@@ -28,7 +28,6 @@ using randori.template;
 namespace randori.behaviors.template {
     public class TemplateRenderer : AbstractBehavior {
 
-        jQuery rootNode;
         readonly DomWalker domWalker;
         readonly TemplateBuilder templateBuilder;
 
@@ -46,8 +45,7 @@ namespace randori.behaviors.template {
         protected override void onPreRegister() {
             base.onPreRegister();
 
-            this.rootNode = jQueryContext.J(decoratedElement);
-            templateBuilder.captureAndEmptyTemplateContents(rootNode);
+            templateBuilder.captureAndEmptyTemplateContents(decoratedNode);
         }
 
         protected void renderMessage() {
@@ -55,11 +53,16 @@ namespace randori.behaviors.template {
             //So this is the only method I have been able to figure out that actually keeps those first text nodes
             //which is really important during templating
             var newNode = templateBuilder.renderTemplateClone(data);
-            rootNode.html(newNode.html());
+            decoratedNode.html(newNode.html());
             domWalker.walkDomChildren(decoratedElement, this);
         }
 
         protected override void onRegister() {
+        }
+
+        protected override void onDeregister() {
+            this.data = null;
+            decoratedNode.empty();
         }
 
         public TemplateRenderer(DomWalker domWalker, TemplateBuilder templateBuilder) {

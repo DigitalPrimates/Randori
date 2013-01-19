@@ -146,6 +146,10 @@ namespace randori.behaviors {
             decoratedNode.empty();
         }
 
+        protected override void onDeregister() {
+            decoratedNode.empty();
+        }
+
         public ViewStack(ContentLoader contentLoader, ContentParser contentParser, DomWalker domWalker, ViewChangeAnimator viewChangeAnimator) {
             this.contentLoader = contentLoader;
             this.contentParser = contentParser;

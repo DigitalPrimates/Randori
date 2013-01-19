@@ -11,6 +11,10 @@ namespace randori.behaviors.list {
 		protected override void onRegister() {
 		}
 
+        protected override void onDeregister() {
+            this.data = null;
+        }
+
 		public override void injectPotentialNode(JsString id, object node) {
 			//Ugly hack for the moment, figure out a better way to handle by checking the identity... somehow... of this class
 			dynamic behavior = node;

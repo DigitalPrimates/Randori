@@ -54,6 +54,7 @@ namespace randori.behaviors {
         }
 
         protected abstract void onRegister();
+        protected abstract void onDeregister();
 
         public virtual void injectPotentialNode( JsString id, object node) {
 
@@ -109,7 +110,7 @@ namespace randori.behaviors {
             return map;
         }
 
-        public AbstractBehavior() {
+        protected AbstractBehavior() {
         }
     }
 }
