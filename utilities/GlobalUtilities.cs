@@ -44,6 +44,15 @@ namespace randori.js {
             return val;
         }
 
+        public static string dateToRFC3339String(JsDate date) {
+            if (date != null ) {
+                var jsonDate = date.toJSON();
+                return jsonDate.substring(0, 10);
+            }
+
+            return null;
+        }
+
         public static void decorateClassForInjection(SpecialType type, string className) {
             type.injectionPoints = defaultInjectionPoints;
             type.getClassDependencies = getClassDependencies;
