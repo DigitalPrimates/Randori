@@ -62,7 +62,7 @@ namespace randori.behaviors {
             fragment.css("left", "0");
             fragment.data( "url", url ) ;
 
-            promise = contentLoader.asynchronousLoad(url).then<AbstractMediator>(delegate(string result) {
+            promise = contentLoader.asynchronousLoad(url).thenR<AbstractMediator>(delegate(string result) {
                 var content = contentParser.parse(result);
 
                 fragment.html(content);

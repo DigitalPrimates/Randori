@@ -33,7 +33,10 @@ namespace randori.async {
 
     [JsType(JsMode.Prototype, Export = false)]
     public delegate void OnRejectedNoReturnDelegate(object reason);
-    enum PromiseState {
+
+    [JsType(JsMode.Json, Export = false)]
+    enum PromiseState
+    {
         Pending, Rejected, Fullfilled
     }
 
@@ -54,21 +57,24 @@ namespace randori.async {
         private bool isFunction( dynamic obj ) {
             return !!(obj && obj.constructor && obj.call && obj.apply);
         }
-        /*** PLEASE KEEP THESE FUNCTIONS IN PRECISELY THIS ORDER, WE ARE RELYING ON OUTPUT ORDER ***/
-        public Promise<object> thenNr(OnFullfilledNoReturnDelegate<T> onFulfilled = null, OnRejectedNoReturnDelegate onRejected = null) {
-            return then<object>(onFulfilled.As<OnFullfilledDelegate<T>>(), onRejected.As<OnRejectedDelegate>());
+        [JsMethod(Export = false)]
+        public Promise<object> then(OnFullfilledNoReturnDelegate<T> onFulfilled = null, OnRejectedNoReturnDelegate onRejected = null)
+        {
+            return thenR<object>(onFulfilled.As<OnFullfilledDelegate<T>>(), onRejected.As<OnRejectedDelegate>());
         }
 
-        public Promise<T1> thenNr<T1>(OnFullfilledNoReturnDelegate<T> onFulfilled = null, OnRejectedNoReturnDelegate onRejected = null) {
-            return then<T1>(onFulfilled.As<OnFullfilledDelegate<T>>(), onRejected.As<OnRejectedDelegate>());
+        public Promise<T1> then<T1>(OnFullfilledNoReturnDelegate<T> onFulfilled = null, OnRejectedNoReturnDelegate onRejected = null) {
+            return thenR<T1>(onFulfilled.As<OnFullfilledDelegate<T>>(), onRejected.As<OnRejectedDelegate>());
         }
 
-        public Promise<object>then(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
-            return then<object>( onFulfilled, onRejected );
+        [JsMethod(Export = false)]
+        public Promise<object> thenR(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null)
+        {
+            return thenR<object>( onFulfilled, onRejected );
         }
 
         //3.2.1 Both onFulfilled and onRejected are optional arguments
-        public Promise<T1> then<T1>(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
+        public Promise<T1> thenR<T1>(OnFullfilledDelegate<T> onFulfilled = null, OnRejectedDelegate onRejected = null) {
             var promise = new Promise<T1>();
 
             //3.2.1.1
@@ -130,7 +136,7 @@ namespace randori.async {
                         if ( callBackResult && callBackResult.then != null) {
                             //3.2.6.3
                             Promise<T> returnedPromise = callBackResult;
-                            returnedPromise.then(
+                            returnedPromise.thenR(
                                 delegate(T innerResponse) {
                                     //3.2.6.3.2
                                     thenContract.promise.resolve(innerResponse);
@@ -186,7 +192,7 @@ namespace randori.async {
                         if (callBackResult && callBackResult.then != null) {
                             //3.2.6.3
                             Promise<T> returnedPromise = callBackResult.As<T>();
-                            returnedPromise.then(
+                            returnedPromise.thenR(
                                 delegate(T innerResponse) {
                                     //3.2.6.3.2
                                     thenContract.promise.resolve(innerResponse);
