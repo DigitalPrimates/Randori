@@ -87,6 +87,8 @@ namespace randori.dom {
             if (elementDescriptor.fragment != null) {
                 //build a context for this behavior IF it turns out that this particular element defines one
                 domExtensionFactory.buildNewContent(element, elementDescriptor.fragment);
+                //change the domWalker for everything under this point in the DOM
+                domWalker = (DomWalker)classBuilder.buildClass("randori.dom.DomWalker");
             }
 
             domWalker.walkChildren(element, currentBehavior);
