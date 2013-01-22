@@ -84,5 +84,56 @@ namespace randori.js {
 
         private static void injectPotentialNode(string id, object node) {
         }
+
+        public static void shallowMerge(JsObject src, JsObject dst) {
+            if (src is JsObject && dst is JsObject) {
+                foreach (var key in src) {
+                    if (src.hasOwnProperty(key)) {
+                        dst[key] = src[key];
+                    }
+                }
+            }
+        }
+
+        public static object clone(object obj) {
+            if ( ( obj == null) || ( JsContext.@typeof( obj ) != "object" ) ) {
+                return obj;
+            }
+
+            //Dates
+            if ( obj is JsDate ) {
+                var copy = new JsDate();
+                copy.setTime( obj.As<JsDate>().getTime() );
+                return copy;
+            }
+
+            //Array
+            if (obj is JsArray) {
+                var copy = new JsArray();
+                var current = obj.As<JsArray>();
+
+                for (var i = 0; i < current.length; i++ ) {
+                    copy[ i ] = clone( current[ i ] );
+                }
+
+                return copy;
+            }
+
+            //Object
+            if (obj is JsObject) {
+                var copy = new JsObject();
+                var current = obj.As<JsObject>();
+
+                foreach (var key in current ) {
+                    if ( current.hasOwnProperty( key )) {
+                        copy[ key ] = clone( current[ key ] );
+                    }
+                }
+
+                return copy;
+            }
+
+            return null;
+        }
     }
 }
