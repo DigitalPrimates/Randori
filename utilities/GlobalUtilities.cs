@@ -44,6 +44,27 @@ namespace randori.js {
             return val;
         }
 
+        public static JsDate RFC3339StringToLocalDate(JsString dateString) {
+            JsDate localDate = null;
+
+            if (dateString == null || dateString.length != 10 ) {
+                throw new JsError("Invalid Date String");
+            }
+
+            var dateMatch = new JsRegExp(@"(\d\d\d\d)-(\d\d)-(\d\d)");
+            var match = dateString.match(dateMatch);
+
+            if (match != null) {
+                dynamic yearString = match[1];
+                dynamic monthString = match[2];
+                dynamic dayString = match[3];
+
+                localDate = new JsDate(yearString, monthString-1, dayString);
+            }
+
+            return localDate;
+        }
+
         public static string dateToRFC3339String(JsDate date) {
             if (date != null ) {
                 var jsonDate = date.toJSON();
