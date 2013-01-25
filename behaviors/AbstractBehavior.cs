@@ -30,6 +30,7 @@ namespace randori.behaviors {
         protected JsObject<object> viableInjectionPoints;
         protected HtmlElement decoratedElement;
         protected jQuery decoratedNode;
+        protected JsArray<string> injectedPoints;
 
         //This highlights the need for some type of decorator more than an extension methodology for something becoming a behavior
         public void hide() {
@@ -66,7 +67,8 @@ namespace randori.behaviors {
                 JsContext.delete( viableInjectionPoints[ id ] );
                 dynamic instance = this;
                 instance[ id ] = node;
-            }
+			    injectedPoints.push( id );
+			}
         }
 
         public void provideDecoratedElement( HtmlElement element ) {
@@ -91,6 +93,22 @@ namespace randori.behaviors {
             onRegister();
         }
 
+        public void removeAndCleanup() {
+            dynamic instance = this;
+            dynamic injection;
+
+            onDeregister();
+
+            for ( var i=0; i<injectedPoints.length; i++ ) {
+                injection = instance[ injectedPoints[ i ] ];
+                if ( injection.removeAndCleanup != null ) {
+                    injection.removeAndCleanup();
+                }
+            }
+
+            injectedPoints = new JsArray<string>();
+        }
+
         private JsObject<object> getBehaviorInjectionPoints() {
             dynamic jsInstance = this;
 
@@ -111,6 +129,7 @@ namespace randori.behaviors {
         }
 
         protected AbstractBehavior() {
+            injectedPoints = new JsArray<string>();
         }
     }
 }

@@ -38,3 +38,4 @@ using SharpKit.JavaScript;
 
 [assembly: JsType(JsMode.Prototype, OmitCasts = true, NativeJsons = true)]
 
+[assembly: JsExport(CodeInjectionFilename = "bin/sharp_core.js")]

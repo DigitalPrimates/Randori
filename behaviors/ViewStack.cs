@@ -66,6 +66,7 @@ namespace randori.behaviors {
                 var content = contentParser.parse(result);
 
                 fragment.html(content);
+                fragment.attr( "data-url", url );
                 decoratedNode.append(div);
 
                 var mediatorCapturer = new MediatorCapturer();
@@ -88,6 +89,13 @@ namespace randori.behaviors {
             var oldView = viewFragmentStack.pop();
             if (oldView != null ) {
                 oldView.remove();
+                var url = oldView.data( "url" ).As<JsString>();
+                var mediator = mediators[url];
+
+                if (mediator != null ) {
+                    mediator.removeAndCleanup();
+                    JsContext.delete(mediators[url]);
+                }
             }
 
             if ( viewFragmentStack.length > 0 ) {

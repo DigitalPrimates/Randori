@@ -34,6 +34,7 @@ namespace randori.js {
     [JsType(JsMode.Prototype, Export = false)]
     public class FutureBehavior {
         public Action verifyAndRegister;
+        public Action removeAndCleanup;
         public Action<HtmlElement> provideDecoratedElement;
         public Action<string,object> injectPotentialNode;
     }
@@ -93,10 +94,14 @@ namespace randori.js {
             futureBehavior.verifyAndRegister = verifyAndRegister;
             futureBehavior.provideDecoratedElement = provideDecoratedElement;
             futureBehavior.injectPotentialNode = injectPotentialNode;
+            futureBehavior.removeAndCleanup = removeAndCleanup;
         }
 
         private static void verifyAndRegister() {
             
+        }
+
+        private static void removeAndCleanup() {
         }
 
         private static void provideDecoratedElement( HtmlElement element ) {

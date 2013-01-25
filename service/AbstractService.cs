@@ -49,6 +49,7 @@ namespace randori.service {
             var promise = new Promise<object>();
 
             xmlHttpRequest.open(verb, uri, true);
+            //xmlHttpRequest.withCredentials = true;
             xmlHttpRequest.onreadystatechange += delegate(DOMEvent evt) {
                 var request = evt.target.As<XMLHttpRequest>();
 
