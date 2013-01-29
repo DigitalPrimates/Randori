@@ -101,7 +101,7 @@ namespace randori.behaviors {
 
             for ( var i=0; i<injectedPoints.length; i++ ) {
                 injection = instance[ injectedPoints[ i ] ];
-                if ( injection.removeAndCleanup != null ) {
+                if ( (injection != null) && (injection.removeAndCleanup != null) ) {
                     injection.removeAndCleanup();
                 }
             }
