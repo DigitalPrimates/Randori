@@ -20,10 +20,11 @@
 using SharpKit.Html;
 using SharpKit.JavaScript;
 using randori.async;
+using randori.service;
 
 namespace randori.content {
 
-    public class ContentLoader {
+    public class ContentLoader : AbstractService {
         readonly ContentCache contentCache;
 
         public JsString synchronousFragmentLoad(JsString fragmentURL) {
@@ -35,41 +36,25 @@ namespace randori.content {
             }
 
             //Else load it now
-            var request = new XMLHttpRequest();
-            request.open("GET", fragmentURL, false);
-            request.send("");
+            xmlHttpRequest.open( "GET", fragmentURL, false );
+            xmlHttpRequest.send( "" );
 
-            if (request.status == 404) {
+            if ( xmlHttpRequest.status == 404 )
+            {
                 throw new JsError("Cannot continue, missing required content " + fragmentURL);
             }
 
-            return request.responseText;
+            return xmlHttpRequest.responseText;
         }
 
         public Promise<string> asynchronousLoad(JsString fragmentURL) {
-
-            var promise = new Promise<string>();
-            var request = new XMLHttpRequest();
-
-            request.open("GET", fragmentURL, true);
-            request.onreadystatechange += delegate(DOMEvent evt) {
-                var r = evt.target.As<XMLHttpRequest>();
-
-                if (r.readyState == XMLHttpRequest.DONE) {
-                    if (r.status == 200) {
-                        promise.resolve(r.responseText);
-                    } else {
-                        promise.reject(r.statusText);
-                    }
-                }
-            };
-
-            request.send("");
-
-            return promise;
+            return sendRequest( "GET", fragmentURL ).thenR<string>( delegate( object value ) {
+                return value;
+            } );
         }
 
-        public ContentLoader( ContentCache contentCache ) {
+        public ContentLoader ( ContentCache contentCache, XMLHttpRequest xmlHttpRequest ) : base( xmlHttpRequest )
+        {
             this.contentCache = contentCache;
         }
     }
