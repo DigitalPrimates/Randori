@@ -24,21 +24,6 @@ using randori.behaviors;
 
 namespace randori.js {
 
-    [JsType(JsMode.Prototype,Export = false)]
-    public class SpecialType {
-        public string className;
-        public Action<dynamic> injectionPoints;
-        public Func<JsArray> getClassDependencies;
-    }
-
-    [JsType(JsMode.Prototype, Export = false)]
-    public class FutureBehavior {
-        public Action verifyAndRegister;
-        public Action removeAndCleanup;
-        public Action<HtmlElement> provideDecoratedElement;
-        public Action<string,object> injectPotentialNode;
-    }
-
     [JsType(JsMode.Global)]
     public class GlobalUtilities {
         public static object Typeof(object val) {
@@ -73,42 +58,6 @@ namespace randori.js {
             }
 
             return null;
-        }
-
-        public static void decorateClassForInjection(SpecialType type, string className) {
-            type.injectionPoints = defaultInjectionPoints;
-            type.getClassDependencies = getClassDependencies;
-            type.className = className;            
-        }
-
-        private static void defaultInjectionPoints(dynamic t) {
-        }
-
-        private static JsArray getClassDependencies() {
-            return new JsArray();
-        }
-
-        public static void decorateClassAsBehavior(dynamic behavior) {
-            FutureBehavior futureBehavior = behavior;
-
-            futureBehavior.verifyAndRegister = verifyAndRegister;
-            futureBehavior.provideDecoratedElement = provideDecoratedElement;
-            futureBehavior.injectPotentialNode = injectPotentialNode;
-            futureBehavior.removeAndCleanup = removeAndCleanup;
-        }
-
-        private static void verifyAndRegister() {
-            
-        }
-
-        private static void removeAndCleanup() {
-        }
-
-        private static void provideDecoratedElement( HtmlElement element ) {
-            
-        }
-
-        private static void injectPotentialNode(string id, object node) {
         }
 
         public static void shallowMerge(JsObject src, JsObject dst) {

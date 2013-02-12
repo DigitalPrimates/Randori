@@ -155,6 +155,8 @@ namespace randori.behaviors {
         }
 
         protected override void onDeregister() {
+            mediators = new JsObject<AbstractMediator>();
+
             decoratedNode.empty();
         }
 

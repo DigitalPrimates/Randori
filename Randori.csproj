@@ -68,6 +68,8 @@
     <Compile Include="i18n\PropertyFileTranslator.cs" />
     <Compile Include="service\AbstractService.cs" />
     <Compile Include="service\ServiceConfig.cs" />
+    <Compile Include="utilities\BehaviorDecorator.cs" />
+    <Compile Include="utilities\InjectionDecorator.cs" />
     <Compile Include="utilities\GlobalUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="service\serializer\AbstractParser.cs" />
