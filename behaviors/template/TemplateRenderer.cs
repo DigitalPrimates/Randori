@@ -52,9 +52,13 @@ namespace randori.behaviors.template {
             //If the first part of the newNode is text and not an actual node, jQuery loses it during an append
             //So this is the only method I have been able to figure out that actually keeps those first text nodes
             //which is really important during templating
-            var newNode = templateBuilder.renderTemplateClone(data);
-            decoratedNode.html(newNode.html());
-            domWalker.walkDomChildren(decoratedElement, this);
+            if ( data != null ) {
+                var newNode = templateBuilder.renderTemplateClone(data);
+                decoratedNode.html(newNode.html());
+                domWalker.walkDomChildren(decoratedElement, this);
+            } else {
+                decoratedNode.empty();
+            }
         }
 
         protected override void onRegister() {
