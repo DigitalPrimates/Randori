@@ -33,6 +33,7 @@ namespace randori.behaviors {
         readonly DomWalker domWalker;
         readonly ViewChangeAnimator viewChangeAnimator;
 
+        //Make sure this tracks the currently selected VIew
         private jQuery _currentView;
         private JsArray<jQuery> viewFragmentStack;
 		private JsObject<AbstractMediator> mediators;
@@ -77,6 +78,7 @@ namespace randori.behaviors {
                 mediators[ url ] = mediator;
 
                 showView(_currentView, fragment);
+                _currentView = fragment;
 
                 return mediator;
             } );
